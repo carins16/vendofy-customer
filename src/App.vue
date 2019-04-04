@@ -1,38 +1,77 @@
 <template>
-  <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
-    </v-toolbar>
+  <v-app id="inspire">
+    <div>
+      <!-- Toolbar -->
+      <v-toolbar color="green" tabs dark>
+        <v-toolbar-title>VENDOFY</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <span class="subheading font-weight-medium">Sign Out</span> 
+        &nbsp;<v-icon>input</v-icon>
+        <!-- Toolbar tabs header -->
+        <template v-slot:extension>
+          <v-tabs v-model="tab" fixed-tabs grow color="transparent">
+            <!-- Active tab slider indicator -->
+            <v-tabs-slider color="yellow"></v-tabs-slider>
+            <v-tabs-slider color="yellow"></v-tabs-slider>
+            <!-- List of tab items -->
+            <v-tab v-for="item in tabItems" :key="item">
+              <v-icon>{{ item.icon }}</v-icon>
+              <span>{{ item.name }}</span>
+            </v-tab>
+          </v-tabs>
+        </template>
+      </v-toolbar>
 
-    <v-content>
-      <HelloWorld/>
-    </v-content>
+      <!-- tabs content -->
+      <v-tabs-items v-model="tab">
+        <v-tab-item v-for="item in tabItems" :key="item">
+          <v-card flat class="tab-item-wrapper">
+            <v-card-text> {{item.name}} </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+
+      <!-- floating cart button -->
+      <v-btn large fab bottom right color="green" dark fixed>
+        <v-badge color="orange" right overlap>
+          <template v-slot:badge>
+            <span class="title">3</span>
+          </template>
+          <v-icon x-large>shopping_cart</v-icon>
+        </v-badge>
+      </v-btn>
+
+    </div>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  },
-  data () {
-    return {
-      //
-    }
+  export default {
+    data: () => ({
+      tab: null,
+      tabItems: [
+        { name: 'Products',  icon: 'business_center'},
+        { name: 'History',   icon: 'history'}
+      ]
+    })
   }
-}
 </script>
+
+<style>
+  .lightbox {
+    box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
+  }
+  .v-badge__badge {
+    height: 32px;
+    width: 32px;
+  }
+  .v-badge--overlap .v-badge__badge {
+    top: -18px;
+    right: -18px;
+  }
+  .tab-item-wrapper {
+    /* vuetify sets the v-tabs__container height to 48px */
+    height: calc(100vh - 48px)
+  }
+</style>
