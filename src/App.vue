@@ -3,10 +3,10 @@
     <div>
       <!-- Toolbar -->
       <v-toolbar color="green" tabs dark>
-        <v-toolbar-title>VENDOFY</v-toolbar-title>
+        <v-toolbar-title>Vendofy</v-toolbar-title>
         <v-spacer></v-spacer>
         <span class="subheading font-weight-medium">Sign Out</span> 
-        &nbsp;<v-icon>input</v-icon>
+        &nbsp;&nbsp;<v-icon>input</v-icon>
         <!-- Toolbar tabs header -->
         <template v-slot:extension>
           <v-tabs v-model="tab" fixed-tabs grow color="transparent">
@@ -14,9 +14,9 @@
             <v-tabs-slider color="yellow"></v-tabs-slider>
             <v-tabs-slider color="yellow"></v-tabs-slider>
             <!-- List of tab items -->
-            <v-tab v-for="item in tabItems" :key="item">
+            <v-tab v-for="item in tabItems" :key="item.id">
               <v-icon>{{ item.icon }}</v-icon>
-              <span>{{ item.name }}</span>
+              &nbsp;<span>{{ item.name }}</span>
             </v-tab>
           </v-tabs>
         </template>
@@ -24,7 +24,7 @@
 
       <!-- tabs content -->
       <v-tabs-items v-model="tab">
-        <v-tab-item v-for="item in tabItems" :key="item">
+        <v-tab-item v-for="item in tabItems" :key="item.id">
           <v-card flat class="tab-item-wrapper">
             <v-card-text> {{item.name}} </v-card-text>
           </v-card>
@@ -50,8 +50,8 @@
     data: () => ({
       tab: null,
       tabItems: [
-        { name: 'Products',  icon: 'business_center'},
-        { name: 'History',   icon: 'history'}
+        { id: 1, name: 'Products',  icon: 'business_center'},
+        { id: 2, name: 'History',   icon: 'history'}
       ]
     })
   }
