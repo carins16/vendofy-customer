@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <div>
       <!-- Toolbar -->
-      <v-toolbar color="green" tabs dark>
+      <v-toolbar color="green" fixed tabs dark>
         <v-toolbar-title>Vendofy</v-toolbar-title>
         <v-spacer></v-spacer>
         <span class="subheading font-weight-medium">Sign Out</span> 
@@ -11,7 +11,6 @@
         <template v-slot:extension>
           <v-tabs v-model="tab" fixed-tabs grow color="transparent">
             <!-- Active tab slider indicator -->
-            <v-tabs-slider color="yellow"></v-tabs-slider>
             <v-tabs-slider color="yellow"></v-tabs-slider>
             <!-- List of tab items -->
             <v-tab v-for="item in tabItems" :key="item.id">
@@ -58,10 +57,6 @@
 </script>
 
 <style>
-  .lightbox {
-    box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
-  }
   .v-badge__badge {
     height: 32px;
     width: 32px;
@@ -72,6 +67,10 @@
   }
   .tab-item-wrapper {
     /* vuetify sets the v-tabs__container height to 48px */
-    height: calc(100vh - 48px)
+    height: calc(100vh - 48px);
+    margin-top: 112px;
+  }
+  .v-tabs__slider {
+    height: 4px;
   }
 </style>
