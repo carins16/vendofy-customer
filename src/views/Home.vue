@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <div>
       <!-- Toolbar -->
-      <v-toolbar color="green" fixed tabs dark>
+      <v-toolbar color="green" tabs dark fixed app>
         <v-toolbar-title>Vendofy</v-toolbar-title>
         <v-spacer></v-spacer>
         <span class="subheading font-weight-medium">Sign Out</span> 
