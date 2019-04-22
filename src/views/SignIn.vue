@@ -10,7 +10,7 @@
                 <v-container fluid>
                     <v-layout align-center justify-center column fill-height>
                         <v-flex xs12 mt-5>
-                            <v-icon color="blue" size="150">fingerprint</v-icon>
+                            <v-icon color="blue-grey" size="150">fingerprint</v-icon>
                         </v-flex>
                         <v-flex xs12 mt-3>
                             <span class="headline font-weight-medium blue--text">Tap your Finger to Sign In</span>
@@ -32,16 +32,16 @@
 
 <script>
 
-import RegisterDialog from '@/components/RegisterDialog'
+    import RegisterDialog from '@/components/RegisterDialog'
 
-export default {
-    components: {
-        RegisterDialog
-    },
-    data: () => ({
-        dialog: false
-    })
-}
+    export default {
+        components: {
+            RegisterDialog
+        },
+        data: () => ({
+            dialog: false
+        })
+    }
 </script>
 
 <style>
