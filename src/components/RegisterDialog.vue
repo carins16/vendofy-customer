@@ -20,11 +20,14 @@
                                         v-model="customerName" 
                                         counter="30"
                                         maxlength="30" 
+                                        :error-messages="customerNameErrors" 
+                                        @input="$v.customerName.$touch()" 
+                                        @blur="$v.customerName.$touch()" 
                                         required>
                             </v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                            <v-btn color="primary" @click="e6 = 2">Next</v-btn>
+                            <v-btn color="primary" @click="stepper().next()">Next</v-btn>
                         </v-flex>
                     </v-layout>
                 </v-stepper-content>
@@ -52,15 +55,42 @@
 </template>
 
 <script>
+    import { validationMixin } from 'vuelidate'
+    import { required } from 'vuelidate/lib/validators'
+
     export default {
+        mixins: [validationMixin],
+        validations: {
+            customerName: { required }
+        },
         props: ['dialog'],
         data: () => ({
             customerName: '',
             e6: 1
         }),
         methods: {
-            closeDialog: function() {
+            stepper: function () {
+                var self = this;
+                return {
+                    next: function () {
+                        self.$v.$touch()
+                        if (!self.$v.$invalid) {
+                            self.e6 = 2
+                            self.$store.dispatch('sendMessage', { type: "ENROLL_FINGERPRINT" })
+                        }
+                    }
+                }
+            },
+            closeDialog: function () {
                 this.$emit("close-dialog", false) ;
+            }
+        },
+        computed: {
+            customerNameErrors () {
+                const errors = []
+                if (!this.$v.customerName.$dirty) return errors
+                !this.$v.customerName.required && errors.push('Your name is required.')
+                return errors
             }
         }
     }

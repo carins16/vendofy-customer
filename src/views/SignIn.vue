@@ -40,7 +40,10 @@
         },
         data: () => ({
             dialog: false
-        })
+        }),
+        methods: {
+            
+        }
     }
 </script>
 
