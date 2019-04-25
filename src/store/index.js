@@ -2,13 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import register from './modules/register'
 import sign_in from './modules/sign_in'
+import products from './modules/products'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
     register,
-    sign_in
+    sign_in,
+    products
   },
   state: {
     socket: {

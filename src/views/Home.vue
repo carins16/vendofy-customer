@@ -5,8 +5,11 @@
       <v-toolbar color="green" tabs dark fixed app>
         <v-toolbar-title>Vendofy</v-toolbar-title>
         <v-spacer></v-spacer>
-        <span class="subheading font-weight-medium">Sign Out</span> 
-        &nbsp;&nbsp;<v-icon>input</v-icon>
+        <span class="subheading font-weight-medium">Sign In</span>
+        &nbsp;&nbsp;
+        <span class="subheading font-weight-medium">|</span>
+        &nbsp;&nbsp;
+        <span class="subheading font-weight-medium" @click="regDialog = true">Register</span> 
         <!-- Toolbar tabs header -->
         <template v-slot:extension>
           <v-tabs v-model="tab" fixed-tabs grow color="transparent">
@@ -40,13 +43,25 @@
         </v-badge>
       </v-btn>
 
+      <register-dialog :dialog="regDialog" @close-dialog='regDialog = false'/>
+      <sign-in-dialog :dialog="signInDialog"/>
+
     </div>
   </v-app>
 </template>
 
 <script>
+  import RegisterDialog from '@/components/RegisterDialog'
+  import SignInDialog from '@/components/SignInDialog'
+
   export default {
+    components: {
+      RegisterDialog,
+      SignInDialog
+    },
     data: () => ({
+      regDialog: false,
+      signInDialog: false,
       tab: null,
       tabItems: [
         { id: 1, name: 'Products',  icon: 'business_center'},

@@ -76,7 +76,7 @@
                         self.$v.$touch()
                         if (!self.$v.$invalid) {
                             self.e6 = 2
-                            self.$store.dispatch('sendMessage', { type: "ENROLL_FINGERPRINT" })
+                            self.$store.dispatch('sendMessage', { "type": "ENROLL_FINGERPRINT" })
                         }
                     }
                 }

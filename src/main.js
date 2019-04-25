@@ -5,6 +5,7 @@ import router from './router'
 import store from './store/index'
 import './registerServiceWorker'
 import VueNativeSock from 'vue-native-websocket'
+import firebase from 'firebase'
 
 Vue.config.productionTip = false
 
@@ -19,22 +20,15 @@ new Vue({
   store,
   render: h => h(App),
   created() {
-    // var ws = new WebSocket("ws://192.168.254.11:81");
+    firebase.initializeApp({
+      apiKey: "AIzaSyBf1VjLPZpSoptX4uT_6HmbwFfXIldNGIQ",
+      authDomain: "vendofy.firebaseapp.com",
+      databaseURL: "https://vendofy.firebaseio.com",
+      projectId: "vendofy",
+      storageBucket: "vendofy.appspot.com",
+      messagingSenderId: "1051291964270"
+    })
 
-    // ws.onopen = () => {
-    //   console.log("WebSocket Connection has been stablished.")
-    //   var obj = { type: "ENROLL_FINGERPRINT" }
-    //   var myJSON = JSON.stringify(obj)
-    //   console.log(myJSON)
-    //   ws.send(myJSON)
-    // }
-
-    // ws.onclose = () => {
-    //   console.log("WebSocket Connection has been terminated.")
-    // }
-
-    // ws.onmessage = evt => {
-    //   console.log(evt.data)
-    // } 
+    this.$store.dispatch('products/fetchProducts')
   }
 }).$mount('#app')
