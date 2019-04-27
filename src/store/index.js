@@ -8,9 +8,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    register,
-    sign_in,
-    products
+    register: register,
+    sign_in: sign_in,
+    products: products
   },
   state: {
     socket: {
@@ -32,7 +32,7 @@ export default new Vuex.Store({
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE (state, message)  {
-      state.socket.message = message
+      state.socket.message = JSON.parse(message.data)
     },
     // mutations for reconnect methods
     SOCKET_RECONNECT(state, count) {
@@ -45,9 +45,11 @@ export default new Vuex.Store({
   actions: {
     sendMessage (context, payload) {
       Vue.prototype.$socket.send(JSON.stringify(payload))
-    },
-    test () {
-      console.log('this is test')
+    }
+  },
+  getters: {
+    getMessage: state => {
+      return state.socket.message
     }
   }
 })

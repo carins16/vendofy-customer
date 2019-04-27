@@ -5,7 +5,7 @@
       <v-toolbar color="green" tabs dark fixed app>
         <v-toolbar-title>Vendofy</v-toolbar-title>
         <v-spacer></v-spacer>
-        <span class="subheading font-weight-medium">Sign In</span>
+        <span class="subheading font-weight-medium" @click="openSignInDialog">Sign In</span>
         &nbsp;&nbsp;
         <span class="subheading font-weight-medium">|</span>
         &nbsp;&nbsp;
@@ -43,8 +43,8 @@
         </v-badge>
       </v-btn>
 
-      <register-dialog :dialog="regDialog" @close-dialog='regDialog = false'/>
-      <sign-in-dialog :dialog="signInDialog"/>
+      <register-dialog :dialog="regDialog" @close-register='regDialog = false'/>
+      <sign-in-dialog :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
 
     </div>
   </v-app>
@@ -67,7 +67,13 @@
         { id: 1, name: 'Products',  icon: 'business_center'},
         { id: 2, name: 'History',   icon: 'history'}
       ]
-    })
+    }),
+    methods: {
+      openSignInDialog() {
+        this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
+        this.signInDialog = true
+      }
+    }
   }
 </script>
 
