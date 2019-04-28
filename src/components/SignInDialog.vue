@@ -1,6 +1,6 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog v-model="dialog" persistent max-width="290">
+    <v-dialog v-model="dialog" persistent max-width="360">
       <v-card>
         
           <v-container fluid>
@@ -11,7 +11,9 @@
                     </v-progress-circular>
                 </v-flex>
                 <v-flex xs12 mt-4 mb-4>
-                    <span class="title font-weight-medium blue--text">{{ msg }}</span>
+                    <span class="title font-weight-medium" v-bind:class="[msgColor]" >
+                      {{ msg }}
+                    </span>
                 </v-flex>
             </v-layout>
           </v-container>
@@ -27,7 +29,8 @@
     props: ['dialog'],
     data: () => ({
       timer: 100,
-      msg: 'Please Scan your Finger'
+      msg: 'Please Scan your Finger',
+      msgColor: 'blue--text'
     }),
     mounted () {
       setInterval(() => {
@@ -50,8 +53,17 @@
         if (val !== null && val !== undefined) {
           if (val.type == "SIGNIN") {
             if (val.status == "CLOSE_SIGN_IN") {
-              this.$emit("close-sign-in", false)
+              this.msg = "Please Scan your Finger"
+              this.msgColor = 'blue--text'
+              this.$emit("close-sign-in")
               this.timer = 100
+            } else if (val.status == "ERROR_MESSAGE") {
+              console.log(val.msg)
+              this.msg = val.msg
+              this.msgColor = 'red--text'
+              this.timer = 100
+            } else if (val.status == "SIGN_IN_SUCCESS") {
+              console.log(val.msg)
             }
           }
         }

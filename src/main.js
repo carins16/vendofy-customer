@@ -9,7 +9,7 @@ import firebase from 'firebase'
 
 Vue.config.productionTip = false
 
-Vue.use(VueNativeSock, 'ws://192.168.254.11:81', { 
+Vue.use(VueNativeSock, 'ws://192.168.3.11:81', { 
   store: store,
   reconnection: true,
   reconnectionDelay: 3000

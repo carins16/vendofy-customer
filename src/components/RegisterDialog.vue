@@ -113,7 +113,7 @@
                 }
             },
             closeDialog: function () {
-                this.$emit("close-register", false) ;
+                this.$emit("close-register")
             }
         },
         computed: {

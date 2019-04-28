@@ -18,7 +18,7 @@ export default {
 
                 var products = [];
 
-                querySnapshot.forEach(function(doc) {
+                querySnapshot.forEach( doc => {
                     products.push(doc.data())
                 });
 
