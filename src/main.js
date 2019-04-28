@@ -9,7 +9,7 @@ import firebase from 'firebase'
 
 Vue.config.productionTip = false
 
-Vue.use(VueNativeSock, 'ws://192.168.3.11:81', { 
+Vue.use(VueNativeSock, 'ws://192.168.254.100:81', { 
   store: store,
   reconnection: true,
   reconnectionDelay: 3000
@@ -29,6 +29,7 @@ new Vue({
       messagingSenderId: "1051291964270"
     })
 
+    this.$store.dispatch('customers/fetchCustomers')
     this.$store.dispatch('products/fetchProducts')
   }
 }).$mount('#app')

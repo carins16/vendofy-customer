@@ -1,6 +1,6 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog v-model="dialog" persistent max-width="360">
+    <v-dialog v-model="dialog" persistent max-width="290">
       <v-card>
         
           <v-container fluid>
@@ -12,7 +12,7 @@
                 </v-flex>
                 <v-flex xs12 mt-4 mb-4>
                     <span class="title font-weight-medium" v-bind:class="[msgColor]" >
-                      {{ msg }}
+                      <center>{{ msg }}</center>
                     </span>
                 </v-flex>
             </v-layout>
@@ -29,7 +29,7 @@
     props: ['dialog'],
     data: () => ({
       timer: 100,
-      msg: 'Please Scan your Finger',
+      msg: 'Please scan your finger',
       msgColor: 'blue--text'
     }),
     mounted () {
@@ -49,22 +49,26 @@
     watch: {
       getMsg(val) {
 
-        console.log(val)  
         if (val !== null && val !== undefined) {
-          if (val.type == "SIGNIN") {
-            if (val.status == "CLOSE_SIGN_IN") {
-              this.msg = "Please Scan your Finger"
-              this.msgColor = 'blue--text'
-              this.$emit("close-sign-in")
-              this.timer = 100
-            } else if (val.status == "ERROR_MESSAGE") {
-              console.log(val.msg)
-              this.msg = val.msg
-              this.msgColor = 'red--text'
-              this.timer = 100
-            } else if (val.status == "SIGN_IN_SUCCESS") {
-              console.log(val.msg)
-            }
+          if (val.type == "SIGNIN_CLOSE") {
+            this.$emit("close-sign-in")
+
+            this.msg = "Please scan your finger"
+            this.msgColor = 'blue--text'
+            this.timer = 100
+          } else if (val.type == "SIGNIN_ERROR") {
+            this.msg = val.msg
+            this.msgColor = 'red--text'
+            this.timer = 100
+          } else if (val.type == "SIGNIN_SUCCESS") {
+
+            this.$store.dispatch('customers/signInCustomers', { fid: val.fid })
+
+            this.$emit("close-sign-in")
+
+            this.msg = "Please scan your finger"
+            this.msgColor = 'blue--text'
+            this.timer = 100
           }
         }
 

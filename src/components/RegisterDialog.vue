@@ -39,7 +39,7 @@
 
                     <v-stepper-content step="2">
                         <v-layout wrap>
-                            <v-flex xs12>
+                            <v-flex xs12 ml-1>
                                 <v-icon color="blue-grey" size="100">fingerprint</v-icon>
                             </v-flex>
                             <v-flex xs12 mt-2>
@@ -61,7 +61,9 @@
                             </v-progress-circular>
                         </v-flex>
                         <v-flex xs12 mt-4 mb-4>
-                            <span class="title font-weight-medium blue--text">Please Scan your Finger</span>
+                            <span class="title font-weight-medium" v-bind:class="[msgColor]">
+                                <center>{{ msg }}</center>
+                            </span>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -84,17 +86,16 @@
             customerName: '',
             e6: 1,
             dialog2: false,
-            timer: 200
+            timer: 100,
+            msg: 'Please put your finger',
+            msgColor: 'blue--text'
         }),
         mounted () {
             setInterval(() => {
                 if (this.dialog2 == true) {
-                    if (this.timer === 0) {
-                        this.timer = 200
-                        this.dialog2 = false
-                        return
+                    if (this.timer > 0) {
+                        this.timer -= 10
                     }
-                    this.timer -= 10
                 }
             }, 1000)
         },
@@ -122,6 +123,36 @@
                 if (!this.$v.customerName.$dirty) return errors
                 !this.$v.customerName.required && errors.push('Your name is required.')
                 return errors
+            },
+            getMsg() {
+                return this.$store.getters.getMessage
+            }
+        },
+        watch: {
+            getMsg(val) {
+                if (val !== null && val !== undefined) {
+                    if (val.type == "ENROLL_CLOSE") {
+                        this.dialog2 = false
+                        this.msg = "Please put your finger"
+                        this.msgColor = 'blue--text'
+                        this.timer = 100
+                    } else if (val.type == "ENROLL_INFO") {
+                        this.msg = val.msg
+                        this.msgColor = 'blue--text'
+                        this.timer = 100
+                    } else if (val.type == "ENROLL_ERROR") {
+                        this.msg = val.msg
+                        this.msgColor = 'red--text'
+                        this.timer = 100
+                    } else if (val.type == "ENROLL_SUCCESS") {
+                        this.$store.dispatch('customers/registerCustomers', { fid: val.fid, name: this.customerName })
+                        this.dialog2 = false
+                        this.msg = "Please put your finger"
+                        this.msgColor = 'blue--text'
+                        this.timer = 100
+                        this.closeDialog()
+                    }
+                }
             }
         }
     }

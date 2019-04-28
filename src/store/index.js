@@ -1,16 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import register from './modules/register'
-import sign_in from './modules/sign_in'
+import customers from './modules/customers'
 import products from './modules/products'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    register: register,
-    sign_in: sign_in,
-    products: products
+    customers,
+    products
   },
   state: {
     socket: {
@@ -32,6 +30,7 @@ export default new Vuex.Store({
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE (state, message)  {
+      console.log(message.data)
       state.socket.message = JSON.parse(message.data)
     },
     // mutations for reconnect methods

@@ -5,11 +5,21 @@
       <v-toolbar color="green" tabs dark fixed app>
         <v-toolbar-title>Vendofy</v-toolbar-title>
         <v-spacer></v-spacer>
-        <span class="subheading font-weight-medium" @click="openSignInDialog">Sign In</span>
-        &nbsp;&nbsp;
-        <span class="subheading font-weight-medium">|</span>
-        &nbsp;&nbsp;
-        <span class="subheading font-weight-medium" @click="regDialog = true">Register</span> 
+
+        <template v-if="!isSigned">
+          <span class="subheading font-weight-medium" @click="openSignInDialog">Sign In</span>
+          &nbsp;&nbsp;
+          <span class="subheading font-weight-medium">|</span>
+          &nbsp;&nbsp;
+          <span class="subheading font-weight-medium" @click="regDialog = true">Register</span> 
+        </template>
+        <template v-else>
+          <span class="subheading font-weight-medium">{{ signedCustomer }}</span>
+          &nbsp;&nbsp;
+          <span class="subheading font-weight-medium">|</span>
+          &nbsp;&nbsp;
+          <span class="subheading font-weight-medium">Sign Out</span> 
+        </template>
         <!-- Toolbar tabs header -->
         <template v-slot:extension>
           <v-tabs v-model="tab" fixed-tabs grow color="transparent">
@@ -66,12 +76,30 @@
       tabItems: [
         { id: 1, name: 'Products',  icon: 'business_center'},
         { id: 2, name: 'History',   icon: 'history'}
-      ]
+      ],
+      isSigned: false,
+      signedCustomer: null
     }),
     methods: {
       openSignInDialog() {
         this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
         this.signInDialog = true
+      }
+    },
+    computed: {
+      customerIsSigned() {
+        return this.$store.getters['customers/getSigned']
+      }
+    },
+    watch: {
+      customerIsSigned(val) {
+        
+        if (val !== null && val !== undefined) {
+          this.signedCustomer = val.name
+          this.isSigned = true
+        } else {
+          this.isSigned = false
+        }
       }
     }
   }
