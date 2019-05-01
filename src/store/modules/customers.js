@@ -28,10 +28,13 @@ export default {
             })
         },
         addCustomersCash (context, cash) {
-            var cust = JSON.parse(localStorage.getItem('signedCustomer'))
-            firebase.firestore().collection('customers').doc(cust.key).update({
-                credit: firebase.firestore.FieldValue.increment(cash)
-            })
+            var customerSigned = JSON.parse(localStorage.getItem('signedCustomer'))
+
+            if (customerSigned !== null && customerSigned !== undefined) {
+                firebase.firestore().collection('customers').doc(customerSigned.key).update({
+                    credit: firebase.firestore.FieldValue.increment(cash)
+                })
+            }
         },
         fetchCustomers ({commit}) {
             firebase.firestore().collection('customers').orderBy('fid', 'asc')
@@ -68,6 +71,10 @@ export default {
                     }))
                 }
             })
+        },
+        signOutCustomer ({commit}) {
+            commit('setSignedCustomer', null)
+            localStorage.removeItem('signedCustomer')
         }
     },
     getters: {

@@ -10,6 +10,9 @@ export default {
         removeFromCart (state, index) {
             console.log(index)
             state.cart.splice(index, 1)
+        },
+        setCart (state, payload) {
+            state.cart = payload
         }
     },
     actions: {
@@ -27,6 +30,9 @@ export default {
         },
         removeCart({commit}, index) {
             commit('removeFromCart', index)
+        },
+        clearCart({commit}) {
+            commit('setCart', [])
         }
     },
     getters: {
@@ -36,9 +42,11 @@ export default {
         getTotal: state => {
             var total = 0;
 
-            state.cart.forEach(c => {
-                total += c.price;
-            });
+            if (state.cart != null && state.cart != undefined) {
+                state.cart.forEach(c => {
+                    total += c.price;
+                });
+            }
 
             return total
         }

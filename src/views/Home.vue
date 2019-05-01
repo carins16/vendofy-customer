@@ -18,7 +18,7 @@
           &nbsp;&nbsp;
           <span class="subheading font-weight-medium">|</span>
           &nbsp;&nbsp;
-          <span class="subheading font-weight-medium">Sign Out</span> 
+          <span class="subheading font-weight-medium" @click="signOutDialog = true">Sign Out</span> 
         </template>
         <!-- Toolbar tabs header -->
         <template v-slot:extension>
@@ -58,6 +58,22 @@
         </v-badge>
       </v-btn>
 
+      <v-dialog v-model="signOutDialog" max-width="320">
+        <v-card>
+          <v-card-title class="headline">Signing Out</v-card-title>
+
+          <v-card-text>
+            <span class="subheading font-weight-regular">Are you sure do you want to sign out ?</span>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" flat="flat" @click="signOut">Yes</v-btn>
+            <v-btn color="green darken-1" flat="flat" @click="signOutDialog = false">No</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <register :dialog="regDialog" @close-register='regDialog = false'/>
       <sign-in :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
       <cart :dialog="cartDialog" @close-cart="cartDialog = false"/>
@@ -90,12 +106,23 @@
         { id: 2, name: 'Transactions',   icon: 'history'}
       ],
       isSigned: false,
-      signedCustomer: null
+      signedCustomer: null,
+      signOutDialog: false
     }),
     methods: {
       openSignInDialog() {
         this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
         this.signInDialog = true
+      },
+      signOut() {
+        this.signOutDialog = false
+
+        this.$store.getters['cart/getCart'].forEach(c => {
+          this.$store.dispatch('products/incrementQty', (c.id-1))
+        })
+
+        this.$store.dispatch('cart/clearCart')
+        this.$store.dispatch('customers/signOutCustomer')
       }
     },
     computed: {

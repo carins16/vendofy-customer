@@ -116,6 +116,18 @@
                 this.$store.dispatch('products/incrementQty', (cart.id-1))
             },
             purchaseNow() {
+                var signedCustomer = JSON.parse(localStorage.getItem('signedCustomer'))
+
+                if (signedCustomer !== null && signedCustomer !== undefined) { 
+                    this.$store.getters['customers/getCustomers'].forEach(cust => {
+                        if (cust.key == signedCustomer.key) this.customerCash = cust.credit
+                    })
+                } else {
+                    this.customerCash = 0
+                }
+
+                this.msg = "Please Insert Bill/Coin"
+
                 this.dialog2 = true
                 this.$store.dispatch('sendMessage', { "type": "ACTIVATE_BILL_COIN" })
             },
@@ -123,6 +135,7 @@
                 this.dialog2 = false
             },
             cancel() {
+                this.customerCash = 0
                 this.dialog2 = false
                 this.$store.dispatch('sendMessage', { "type": "DEACTIVATE_BILL_COIN" })
             }
@@ -149,17 +162,19 @@
                         this.msg = "Please Insert Bill/Coin"
                     } else if (val.type == "CURRENCY_INFO") {
                         this.msg = "Adding... ₱" + val.msg
-                    }
+                    } 
                 }
             },
             getCustomerCash(val) {
-                var cust = JSON.parse(localStorage.getItem('signedCustomer'))
+                var signedCustomer = JSON.parse(localStorage.getItem('signedCustomer'))
 
-                val.forEach( c => {
-                    if (c.key == cust.key) {
-                        this.customerCash = c.credit
-                    }
-                })
+                if ((val !== null && val !== undefined) && (signedCustomer !== null && signedCustomer !== undefined)) {
+                    val.forEach( cust => {
+                        if (cust.key == signedCustomer.key) this.customerCash = cust.credit
+                    })
+                } else {
+                    this.customerCash = 0
+                }
             }
         }
     }

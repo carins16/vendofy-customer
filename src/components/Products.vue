@@ -14,13 +14,10 @@
                             <p class="subheading font-weight-medium blue-grey--text mb-2 text-xs-right">Quantity: {{ product.qty }}</p>
                         </v-flex>
                     </v-layout>     
-                    <v-btn color="orange" block round class="white--text" @click="addToCart(product, index)" :disabled="product.qty <= 0">
-                        <span v-if="product.qty > 0">
-                            Add to Cart
-                        </span>
-                        <span v-else>
-                            Unavailable
-                        </span>
+                    <v-btn color="orange" block round class="white--text" @click="addToCart(product, index)" 
+                        :disabled="product.qty <= 0 || (customerIsSigned == null && customerIsSigned == undefined)">
+                        <span v-if="product.qty > 0">Add to Cart</span>
+                        <span v-else>Unavailable</span>
                     </v-btn>               
                 </v-card-text>
             </v-card>
@@ -36,6 +33,9 @@ export default {
     computed: {
       getProducts() {
         return this.$store.getters['products/getProducts']
+      },
+      customerIsSigned() {
+        return this.$store.getters['customers/getSignedCustomer']
       }
     },
     watch: {
