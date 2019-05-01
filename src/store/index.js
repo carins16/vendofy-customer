@@ -2,13 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import customers from './modules/customers'
 import products from './modules/products'
+import cart from './modules/cart'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
     customers,
-    products
+    products,
+    cart
   },
   state: {
     socket: {

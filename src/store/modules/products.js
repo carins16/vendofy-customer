@@ -8,6 +8,12 @@ export default {
     mutations: {
         setProducts (state, payload) {
             state.products = payload
+        },
+        decreaseQty (state, index) {
+            state.products[index].qty--
+        },
+        incrementQty (state, index) {
+            state.products[index].qty++
         }
     },
     actions: {
@@ -19,14 +25,30 @@ export default {
                 var products = [];
 
                 querySnapshot.forEach( doc => {
-                    products.push(doc.data())
+                    products.push({
+                        key:    doc.id,
+                        id:     doc.data().id,
+                        descrp: doc.data().descrp,
+                        size:   doc.data().size,
+                        price:  doc.data().price,
+                        qty:    doc.data().qty,
+                        pic:    doc.data().pic
+                    })
                 });
 
                 commit('setProducts', products)
             });
+        },
+        decrementQty({commit}, index) {
+            commit('decreaseQty', index)
+        },
+        incrementQty({commit}, index) {
+            commit('incrementQty', index)
         }
     },
     getters: {
-
+        getProducts: state => {
+            return state.products
+        }
     }
 }

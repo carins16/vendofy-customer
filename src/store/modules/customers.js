@@ -4,14 +4,14 @@ export default {
     namespaced: true,
     state: {
         customers: null,
-        signed: null
+        signedCustomer: JSON.parse(localStorage.getItem('signedCustomer'))
     },
     mutations: {
         setCustomers (state, payload) {
             state.customers = payload
         },
-        setSigned (state, payload) {
-            state.signed = payload
+        setSignedCustomer (state, payload) {
+            state.signedCustomer = payload
         }
     },
     actions: {
@@ -19,11 +19,18 @@ export default {
             firebase.firestore().collection('customers').add({
                 fid: payload.fid,
                 name: payload.name,
+                credit: 0,
                 regDate: firebase.firestore.FieldValue.serverTimestamp()
             }).then ( docRef => {
                 console.log("Customer written with ID: ", docRef.id);
             }).catch( error => {
                 console.error("Error adding customer: ", error);
+            })
+        },
+        addCustomersCash (context, cash) {
+            var cust = JSON.parse(localStorage.getItem('signedCustomer'))
+            firebase.firestore().collection('customers').doc(cust.key).update({
+                credit: firebase.firestore.FieldValue.increment(cash)
             })
         },
         fetchCustomers ({commit}) {
@@ -33,7 +40,13 @@ export default {
                 var customers = [];
 
                 querySnapshot.forEach( doc => {
-                    customers.push(doc.data())
+                    customers.push({
+                        key:    doc.id,
+                        fid:    doc.data().fid,
+                        name:   doc.data().name,
+                        regDate:doc.data().regDate,
+                        credit:   doc.data().credit
+                    })
                 });
 
                 commit('setCustomers', customers)
@@ -41,21 +54,28 @@ export default {
         },
         signInCustomers ({state, commit}, payload) {
 
-            state.customers.forEach( cust => {
-                
-                if (payload.fid == cust.fid) {
-                    console.log(cust.fid)
-                    commit('setSigned', {
-                        fid: cust.fid,
-                        name: cust.name
+            state.customers.forEach( c => {
+                if (payload.fid == c.fid) {
+                    commit('setSignedCustomer', {
+                        key:    c.key,
+                        fid:    c.fid,
+                        name:   c.name
                     })
+                    localStorage.setItem('signedCustomer', JSON.stringify({ 
+                        key:    c.key,
+                        fid:    c.fid,
+                        name:   c.name
+                    }))
                 }
             })
         }
     },
     getters: {
-        getSigned: state => {
-            return state.signed
+        getSignedCustomer: state => {
+            return state.signedCustomer
+        },
+        getCustomers: state => {
+            return state.customers
         }
     }
 }

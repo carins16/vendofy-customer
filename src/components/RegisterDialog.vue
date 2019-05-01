@@ -4,7 +4,7 @@
             <v-card>
                 <!-- Header toolbar -->
                 <v-toolbar dark color="green">
-                    <v-btn icon dark @click="closeDialog">
+                    <v-btn icon dark @click="closeReg">
                         <v-icon>close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Register</v-toolbar-title>
@@ -12,7 +12,7 @@
                 <!-- Stepper Form -->
                 <v-stepper v-model="e6" vertical>
                     <v-stepper-step :complete="e6 > 1" step="1">
-                        Customer Name
+                        Customer Information
                     </v-stepper-step>
                     <v-stepper-content step="1">
                         <v-layout wrap>
@@ -113,7 +113,7 @@
                     }
                 }
             },
-            closeDialog: function () {
+            closeReg: function () {
                 this.$emit("close-register")
             }
         },
@@ -150,7 +150,7 @@
                         this.msg = "Please put your finger"
                         this.msgColor = 'blue--text'
                         this.timer = 100
-                        this.closeDialog()
+                        this.closeReg()
                     }
                 }
             }

@@ -36,46 +36,58 @@
 
       <!-- tabs content -->
       <v-tabs-items v-model="tab">
-        <v-tab-item v-for="item in tabItems" :key="item.id">
+        <v-tab-item key="0">
           <v-card flat class="tab-item-wrapper">
-            <v-card-text> {{item.name}} </v-card-text>
+            <products/>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item key="1">
+          <v-card flat class="tab-item-wrapper">
+            <transactions/>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
 
       <!-- floating cart button -->
-      <v-btn large fab bottom right color="green" dark fixed>
+      <v-btn @click="cartDialog = true" large fab bottom right color="green" dark fixed>
         <v-badge color="orange" right overlap>
           <template v-slot:badge>
-            <span class="title">3</span>
+            <span class="title">{{getCartCount}}</span>
           </template>
           <v-icon x-large>shopping_cart</v-icon>
         </v-badge>
       </v-btn>
 
-      <register-dialog :dialog="regDialog" @close-register='regDialog = false'/>
-      <sign-in-dialog :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
-
+      <register :dialog="regDialog" @close-register='regDialog = false'/>
+      <sign-in :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
+      <cart :dialog="cartDialog" @close-cart="cartDialog = false"/>
     </div>
   </v-app>
 </template>
 
 <script>
-  import RegisterDialog from '@/components/RegisterDialog'
-  import SignInDialog from '@/components/SignInDialog'
+  import Register from '@/components/RegisterDialog'
+  import SignIn from '@/components/SignInDialog'
+  import Products from '@/components/Products'
+  import Transactions from '@/components/Transactions'
+  import Cart from '@/components/CartDialog'
 
   export default {
     components: {
-      RegisterDialog,
-      SignInDialog
+      Register,
+      SignIn,
+      Products,
+      Transactions,
+      Cart
     },
     data: () => ({
       regDialog: false,
       signInDialog: false,
+      cartDialog: false,
       tab: null,
       tabItems: [
         { id: 1, name: 'Products',  icon: 'business_center'},
-        { id: 2, name: 'History',   icon: 'history'}
+        { id: 2, name: 'Transactions',   icon: 'history'}
       ],
       isSigned: false,
       signedCustomer: null
@@ -88,18 +100,30 @@
     },
     computed: {
       customerIsSigned() {
-        return this.$store.getters['customers/getSigned']
+        return this.$store.getters['customers/getSignedCustomer']
+      },
+      getCartCount() {
+        return this.$store.getters['cart/getCart'].length
       }
     },
     watch: {
       customerIsSigned(val) {
-        
         if (val !== null && val !== undefined) {
           this.signedCustomer = val.name
           this.isSigned = true
         } else {
           this.isSigned = false
         }
+      }
+    },
+    mounted() {
+      var val = this.$store.getters['customers/getSignedCustomer']
+
+      if (val !== null && val !== undefined) {
+        this.signedCustomer = val.name
+        this.isSigned = true
+      } else {
+        this.isSigned = false
       }
     }
   }
