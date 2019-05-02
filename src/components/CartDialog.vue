@@ -67,7 +67,7 @@
                 </v-layout>
             </v-card>
         </v-dialog>
-        <!-- Coin Dialog -->
+        <!-- Currency Dialog -->
         <v-dialog v-model="dialog2" persistent max-width="290">
             <v-card>
                 <v-container fluid>
@@ -89,11 +89,20 @@
                         <v-flex xs12 ml-2 mr-2>
                             <v-btn block color="green" class="white--text" @click="confirm" :disabled="customerCash < getTotal">Confirm</v-btn>
                         </v-flex>
-                        <v-flex xs12 ml-2 mr-2>
-                            <v-btn block color="red" class="white--text" @click="cancel">Cancel</v-btn>
+                        <v-flex xs12 ml-2 mr-2>     
+                            <v-btn block color="red" class="white--text" @click="cancel">Close</v-btn>
                         </v-flex>
                     </v-layout>
                 </v-container>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="dialog3" persistent max-width="360">
+            <v-card color="primary" dark>
+                <v-card-text>
+                    <span class="title font-weight-regular">Processing. . . ({{fallItems}}/{{getCartCount}})</span>
+                    <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+                </v-card-text>
             </v-card>
         </v-dialog>
     </div>
@@ -104,8 +113,10 @@
         props: ['dialog'],
         data: () => ({
             dialog2: false,
+            dialog3: false,
             customerCash: 0,
-            msg: 'Please Insert Bill/Coin'
+            msg: 'Please Insert Bill/Coin',
+            fallItems: 0
         }),
         methods: {
             closeCart: function () {
@@ -133,6 +144,25 @@
             },
             confirm() {
                 this.dialog2 = false
+                // this.dialog3 = true
+
+                var items = []
+                this.$store.getters['cart/getCart'].forEach( c => {
+                    items.push(c.id)
+                    this.$store.dispatch('transactions/saveTransaction', { 
+                        orderedProd: c.descrp + "(" + c.size + ")",
+                        pic: c.pic,
+                        price: c.price,
+                        key: c.key
+                    })
+                })                
+
+                this.$store.dispatch('cart/clearCart')
+
+                this.$store.dispatch('sendMessage', {   "type": "PURCHASE_ITEMS",
+                                                        "size": items.length, 
+                                                        "items": items
+                                                    })
             },
             cancel() {
                 this.customerCash = 0
@@ -152,6 +182,9 @@
             },
             getCustomerCash() {
                 return this.$store.getters['customers/getCustomers']
+            },
+            getCartCount() {
+                return this.$store.getters['cart/getCart'].length
             }
         },
         watch: {

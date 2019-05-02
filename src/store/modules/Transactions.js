@@ -1,46 +1,66 @@
+import firebase from 'firebase'
+
 export default {
     namespaced: true,
     state: {
-        cart: []
+        transactions: null
     },
     mutations: {
-        appendToCart (state, payload) {
-            state.cart.push(payload)
-        },
-        removeFromCart (state, index) {
-            console.log(index)
-            state.cart.splice(index, 1)
+        setHistory(state, payload) {
+            state.transactions = payload
         }
     },
     actions: {
-        addCart({commit}, payload) {
-            var cart = [];
+        fetchTransactions({commit}) {
+            firebase.firestore().collection('transactions').orderBy('dateTrans', 'desc')
+            .onSnapshot( querySnapshot => {
 
-            cart.push({
-                id:     payload.id,
-                descrp: payload.descrp,
-                size:   payload.size,
-                price:  payload.price,
-                pic:    payload.pic
-            })
-            commit('appendToCart', payload)
+                var transactions = [];
+
+                querySnapshot.forEach( doc => {
+                    transactions.push({
+                        key:    doc.id,
+                        customerKey:       doc.data().customerKey,
+                        dateTrans:      doc.data().dateTrans.seconds,
+                        orderedProd:    doc.data().orderedProd,
+                        pic:            doc.data().pic,
+                        price:          doc.data().price
+                    })
+                });
+
+                commit('setHistory', transactions)
+            });
         },
-        removeCart({commit}, index) {
-            commit('removeFromCart', index)
+        saveTransaction(context, payload) {
+            console.log(payload)
+
+            var customerSigned = JSON.parse(localStorage.getItem('signedCustomer'))
+
+            if (customerSigned !== null && customerSigned !== undefined) {
+
+                firebase.firestore().collection('transactions').add({
+                    customerKey: customerSigned.key,
+                    dateTrans: firebase.firestore.FieldValue.serverTimestamp(),
+                    orderedProd: payload.orderedProd,
+                    pic: payload.pic,
+                    price: payload.price
+                }).then ( docRef => {
+                    firebase.firestore().collection('customers').doc(customerSigned.key).update({
+                        credit: firebase.firestore.FieldValue.increment(-payload.price)
+                    })
+                    firebase.firestore().collection('products').doc(payload.key).update({
+                        qty: firebase.firestore.FieldValue.increment(-1)
+                    })
+                    console.log("Transaction written with ID: ", docRef.id);
+                }).catch( error => {
+                    console.error("Error adding transaction: ", error);
+                })
+            }
         }
     },
     getters: {
-        getCart: state => {
-            return state.cart
-        },
-        getTotal: state => {
-            var total = 0;
-
-            state.cart.forEach(c => {
-                total += c.price;
-            });
-
-            return total
+        getTransactions: state => {
+            return state.transactions
         }
     }
 }

@@ -15,6 +15,8 @@ Vue.use(VueNativeSock, 'ws://192.168.254.100:81', {
   reconnectionDelay: 3000
 })
 
+Vue.use(require('vue-moment'));
+
 new Vue({
   router,
   store,
@@ -31,5 +33,6 @@ new Vue({
 
     this.$store.dispatch('customers/fetchCustomers')
     this.$store.dispatch('products/fetchProducts')
+    this.$store.dispatch('transactions/fetchTransactions')
   }
 }).$mount('#app')

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import customers from './modules/customers'
 import products from './modules/products'
 import cart from './modules/cart'
+import transactions from './modules/transactions'
 
 Vue.use(Vuex)
 
@@ -10,7 +11,8 @@ export default new Vuex.Store({
   modules: {
     customers,
     products,
-    cart
+    cart,
+    transactions
   },
   state: {
     socket: {
@@ -45,6 +47,7 @@ export default new Vuex.Store({
   },
   actions: {
     sendMessage (context, payload) {
+      console.log(JSON.stringify(payload))
       Vue.prototype.$socket.send(JSON.stringify(payload))
     }
   },
