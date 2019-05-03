@@ -21,8 +21,8 @@
                             </v-list-tile-sub-title>
                         </v-list-tile-content>
                         <v-list-tile-action>
-                            <span class="grey--text">{{ trans.dateTrans | moment("MMMM, D YYYY") }}</span>
-                            <span class="grey--text">{{ trans.dateTrans | moment("h:mm A") }}</span>
+                            <span class="grey--text">{{ trans.dateTrans.seconds | moment("MMMM, D YYYY") }}</span>
+                            <span class="grey--text">{{ trans.dateTrans.seconds | moment("h:mm A") }}</span>
                         </v-list-tile-action>
 
                     </v-list-tile>
@@ -47,11 +47,11 @@
             getTransactions(val) {
                 var signedCustomer = JSON.parse(localStorage.getItem('signedCustomer'))
 
-                if (val !== null && val !== undefined) {
+                if ((val !== null && val !== undefined) && (signedCustomer !== null && signedCustomer !== undefined)) {
                     var trans = []
                     val.forEach( t => {
                         if (t.customerKey == signedCustomer.key) {
-                            trans.push(t)
+                            if (t.dateTrans !== null && t.dateTrans !== undefined) trans.push(t)
                         }
                     })
 

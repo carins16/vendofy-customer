@@ -131,6 +131,18 @@
       },
       getCartCount() {
         return this.$store.getters['cart/getCart'].length
+      },
+      getAlarmStatus() {
+        return this.$store.getters['config/getAlarm']
+      },
+      getLockStatus() {
+        return this.$store.getters['config/getLock']
+      },
+      getConnectionStatus() {
+        return this.$store.getters.getConnection
+      },
+      getMsg() {
+        return this.$store.getters.getMessage
       }
     },
     watch: {
@@ -140,6 +152,39 @@
           this.isSigned = true
         } else {
           this.isSigned = false
+        }
+      },
+      getAlarmStatus(val) {
+        if (val !== null && val !== undefined) {
+          if (val) {
+            this.$store.dispatch('sendMessage', { "type": "ALARM_ON" })
+          } else {
+            this.$store.dispatch('sendMessage', { "type": "ALARM_OFF" })
+          }
+          
+        }
+      },
+      getLockStatus(val) {
+        if (val !== null && val !== undefined) {
+          if (val) {
+            this.$store.dispatch('sendMessage', { "type": "LOCK_OFF" })
+          } else {
+            this.$store.dispatch('sendMessage', { "type": "LOCK_ON" })
+          }
+        }
+      },
+      getConnectionStatus(val) {
+        if (val !== null && val !== undefined) {
+          console.log(val)
+        }
+      },
+      getMsg(val) {
+        if (val !== null && val !== undefined) {
+          if (val.type == "ALARM_ON") {
+            this.$store.dispatch('config/updateAlarm', { alarm: true })
+          } else if (val.type == "ALARM_OFF") {
+            this.$store.dispatch('config/updateAlarm', { alarm: false })
+          }
         }
       }
     },

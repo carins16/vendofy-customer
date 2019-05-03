@@ -21,7 +21,7 @@ export default {
                     transactions.push({
                         key:    doc.id,
                         customerKey:       doc.data().customerKey,
-                        dateTrans:      doc.data().dateTrans.seconds,
+                        dateTrans:      doc.data().dateTrans,
                         orderedProd:    doc.data().orderedProd,
                         pic:            doc.data().pic,
                         price:          doc.data().price

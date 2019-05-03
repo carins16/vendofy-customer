@@ -4,6 +4,7 @@ import customers from './modules/customers'
 import products from './modules/products'
 import cart from './modules/cart'
 import transactions from './modules/transactions'
+import config from './modules/config'
 
 Vue.use(Vuex)
 
@@ -12,7 +13,8 @@ export default new Vuex.Store({
     customers,
     products,
     cart,
-    transactions
+    transactions,
+    config
   },
   state: {
     socket: {
@@ -54,6 +56,9 @@ export default new Vuex.Store({
   getters: {
     getMessage: state => {
       return state.socket.message
+    },
+    getConnection: state => {
+      return state.isConnected
     }
   }
 })

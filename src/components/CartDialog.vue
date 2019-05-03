@@ -144,7 +144,7 @@
             },
             confirm() {
                 this.dialog2 = false
-                // this.dialog3 = true
+                this.dialog3 = true
 
                 var items = []
                 this.$store.getters['cart/getCart'].forEach( c => {
@@ -156,8 +156,6 @@
                         key: c.key
                     })
                 })                
-
-                this.$store.dispatch('cart/clearCart')
 
                 this.$store.dispatch('sendMessage', {   "type": "PURCHASE_ITEMS",
                                                         "size": items.length, 
@@ -195,7 +193,9 @@
                         this.msg = "Please Insert Bill/Coin"
                     } else if (val.type == "CURRENCY_INFO") {
                         this.msg = "Adding... ₱" + val.msg
-                    } 
+                    } else if (val.type == "FALL_ITEMS") {
+                        this.fallItems++
+                    }
                 }
             },
             getCustomerCash(val) {
@@ -207,6 +207,14 @@
                     })
                 } else {
                     this.customerCash = 0
+                }
+            },
+            fallItems(val) {
+                if (val >= this.getCartCount) {
+                    this.dialog3 = false
+                    this.fallItems = 0
+                    this.$store.dispatch('cart/clearCart')
+                    this.closeCart()
                 }
             }
         }
