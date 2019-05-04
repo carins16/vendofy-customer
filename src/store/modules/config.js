@@ -22,9 +22,9 @@ export default {
                 commit('setLock', doc.data().lock)
             });
         },
-        updateAlarm({commit}, payload) {
+        updateAlarm(context, status) {
             firebase.firestore().collection('config').doc('DYoThSRAElmX50fQI6jB').update({
-                payload
+                alarm: status
             }).then(function() {
                 console.log("Alarm successfully updated!");
             })

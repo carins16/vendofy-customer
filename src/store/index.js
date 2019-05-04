@@ -36,7 +36,6 @@ export default new Vuex.Store({
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE (state, message)  {
-      console.log(message.data)
       state.socket.message = JSON.parse(message.data)
     },
     // mutations for reconnect methods
@@ -48,9 +47,10 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    sendMessage (context, payload) {
-      console.log(JSON.stringify(payload))
-      Vue.prototype.$socket.send(JSON.stringify(payload))
+    sendMessage ({state}, payload) {
+      if(state.socket.isConnected) {
+        Vue.prototype.$socket.send(JSON.stringify(payload))
+      }
     }
   },
   getters: {
@@ -58,7 +58,7 @@ export default new Vuex.Store({
       return state.socket.message
     },
     getConnection: state => {
-      return state.isConnected
+      return state.socket.isConnected
     }
   }
 })

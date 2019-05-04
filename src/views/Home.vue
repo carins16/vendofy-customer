@@ -7,18 +7,22 @@
         <v-spacer></v-spacer>
 
         <template v-if="!isSigned">
-          <span class="subheading font-weight-medium" @click="openSignInDialog">Sign In</span>
-          &nbsp;&nbsp;
-          <span class="subheading font-weight-medium">|</span>
-          &nbsp;&nbsp;
-          <span class="subheading font-weight-medium" @click="regDialog = true">Register</span> 
+          <v-toolbar-items>
+              <v-btn class="subheading font-weight-medium" @click="openSignInDialog" dark flat>   
+                Sign In
+              </v-btn>
+              <span class="title font-weight-medium mt-3">|</span>
+              <v-btn class="subheading font-weight-medium" @click="regDialog = true" dark flat>   
+                Register
+              </v-btn>
+          </v-toolbar-items>
         </template>
         <template v-else>
-          <span class="subheading font-weight-medium">{{ signedCustomer }}</span>
-          &nbsp;&nbsp;
-          <span class="subheading font-weight-medium">|</span>
-          &nbsp;&nbsp;
-          <span class="subheading font-weight-medium" @click="signOutDialog = true">Sign Out</span> 
+          <v-toolbar-items>
+            <span class="subheading font-weight-medium mt-3 mr-3">{{ signedCustomer }}</span>
+            <span class="title font-weight-medium mt-3">|</span>
+            <v-btn class="subheading font-weight-medium" @click="signOutDialog = true" dark flat>Sign Out</v-btn>
+          </v-toolbar-items>
         </template>
         <!-- Toolbar tabs header -->
         <template v-slot:extension>
@@ -77,6 +81,16 @@
       <register :dialog="regDialog" @close-register='regDialog = false'/>
       <sign-in :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
       <cart :dialog="cartDialog" @close-cart="cartDialog = false"/>
+
+      <v-dialog v-model="reconDialog" persistent width="300">
+        <v-card color="green" dark>
+          <v-card-text>
+            <span class="subheading font-weight-regular">Connecting to vending machine . . .</span>
+            <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
     </div>
   </v-app>
 </template>
@@ -103,11 +117,12 @@
       tab: null,
       tabItems: [
         { id: 1, name: 'Products',  icon: 'business_center'},
-        { id: 2, name: 'Transactions',   icon: 'history'}
+        { id: 2, name: 'Purchase History',   icon: 'history'}
       ],
       isSigned: false,
       signedCustomer: null,
-      signOutDialog: false
+      signOutDialog: false,
+      reconDialog: true
     }),
     methods: {
       openSignInDialog() {
@@ -156,12 +171,9 @@
       },
       getAlarmStatus(val) {
         if (val !== null && val !== undefined) {
-          if (val) {
-            this.$store.dispatch('sendMessage', { "type": "ALARM_ON" })
-          } else {
+          if (val == false) {
             this.$store.dispatch('sendMessage', { "type": "ALARM_OFF" })
           }
-          
         }
       },
       getLockStatus(val) {
@@ -175,15 +187,19 @@
       },
       getConnectionStatus(val) {
         if (val !== null && val !== undefined) {
-          console.log(val)
+          if (val) {
+            this.reconDialog = false
+          } else {
+            this.reconDialog = true
+          }
         }
       },
       getMsg(val) {
         if (val !== null && val !== undefined) {
           if (val.type == "ALARM_ON") {
-            this.$store.dispatch('config/updateAlarm', { alarm: true })
+            this.$store.dispatch('config/updateAlarm', true)
           } else if (val.type == "ALARM_OFF") {
-            this.$store.dispatch('config/updateAlarm', { alarm: false })
+            this.$store.dispatch('config/updateAlarm', false)
           }
         }
       }

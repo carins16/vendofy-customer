@@ -57,20 +57,22 @@ export default {
         },
         signInCustomers ({state, commit}, payload) {
 
-            state.customers.forEach( c => {
-                if (payload.fid == c.fid) {
-                    commit('setSignedCustomer', {
-                        key:    c.key,
-                        fid:    c.fid,
-                        name:   c.name
-                    })
-                    localStorage.setItem('signedCustomer', JSON.stringify({ 
-                        key:    c.key,
-                        fid:    c.fid,
-                        name:   c.name
-                    }))
-                }
-            })
+            if (state.customers != null && state.customers != undefined) {
+                state.customers.forEach( c => {
+                    if (payload.fid == c.fid) {
+                        commit('setSignedCustomer', {
+                            key:    c.key,
+                            fid:    c.fid,
+                            name:   c.name
+                        })
+                        localStorage.setItem('signedCustomer', JSON.stringify({ 
+                            key:    c.key,
+                            fid:    c.fid,
+                            name:   c.name
+                        }))
+                    }
+                })
+            }
         },
         signOutCustomer ({commit}) {
             commit('setSignedCustomer', null)

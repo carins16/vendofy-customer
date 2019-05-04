@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 Vue.use(VueNativeSock, 'ws://192.168.137.100:81', { 
   store: store,
   reconnection: true,
-  reconnectionDelay: 3000
+  reconnectionDelay: 1000
 })
 
 Vue.use(require('vue-moment'));
@@ -35,5 +35,6 @@ new Vue({
     this.$store.dispatch('products/fetchProducts')
     this.$store.dispatch('transactions/fetchTransactions')
     this.$store.dispatch('config/fetchConfig')
+    setTimeout(() => { this.$store.dispatch('customers/signInCustomers', { fid: 1 }) }, 2000);
   }
 }).$mount('#app')
