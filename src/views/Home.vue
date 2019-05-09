@@ -3,7 +3,7 @@
     <div>
       <!-- Toolbar -->
       <v-toolbar color="green" tabs dark fixed app>
-        <v-toolbar-title>Vendofy</v-toolbar-title>
+        <v-toolbar-title>VENDOFY</v-toolbar-title>
         <v-spacer></v-spacer>
 
         <template v-if="!isSigned">
@@ -122,21 +122,28 @@
       isSigned: false,
       signedCustomer: null,
       signOutDialog: false,
-      reconDialog: true
+      reconDialog: false
     }),
     methods: {
       openSignInDialog() {
-        this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
-        this.signInDialog = true
+        // this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
+        // this.signInDialog = true
+        this.$store.dispatch('customers/signInCustomers', { fid: 1 })
       },
       signOut() {
         this.signOutDialog = false
 
+        // get all items added to cart
         this.$store.getters['cart/getCart'].forEach(c => {
+          // roll back items from cart to products
           this.$store.dispatch('products/incrementQty', (c.id-1))
         })
 
+        // clear the cart
         this.$store.dispatch('cart/clearCart')
+        // clear transaction history of customer
+        this.$store.dispatch('transactions/clearTransactions')
+        // end customer session
         this.$store.dispatch('customers/signOutCustomer')
       }
     },
@@ -172,6 +179,7 @@
       getAlarmStatus(val) {
         if (val !== null && val !== undefined) {
           if (val == false) {
+            // alarm has been turn off by admin
             this.$store.dispatch('sendMessage', { "type": "ALARM_OFF" })
           }
         }
@@ -196,11 +204,8 @@
       },
       getMsg(val) {
         if (val !== null && val !== undefined) {
-          if (val.type == "ALARM_ON") {
-            this.$store.dispatch('config/updateAlarm', true)
-          } else if (val.type == "ALARM_OFF") {
-            this.$store.dispatch('config/updateAlarm', false)
-          }
+          // alarm has been trigger from vending machine
+          if (val.type == "ALARM_ON") this.$store.dispatch('config/updateAlarm', true)
         }
       }
     },

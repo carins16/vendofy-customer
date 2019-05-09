@@ -5,13 +5,13 @@
             <v-card>
                 <!-- Header toolbar -->
                 <v-toolbar dark color="green">
-                    <v-btn icon dark @click="closeCart">
+                    <v-btn icon dark large @click="closeCart">
                         <v-icon>arrow_back</v-icon>
                     </v-btn>
                     <v-toolbar-title>Cart</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-toolbar-items>
-                        <v-btn type="submit" class="subheading" dark flat 
+                        <v-btn type="submit" class="subheading" dark flat large
                                 :disabled="getCart.length <= 0" 
                                 @click="purchaseNow">   
                             Purchase Now
@@ -87,10 +87,10 @@
                     </v-layout>
                     <v-layout align-center justify-center row>
                         <v-flex xs12 ml-2 mr-2>
-                            <v-btn block color="green" class="white--text" @click="confirm" :disabled="customerCash < getTotal">Confirm</v-btn>
+                            <v-btn block large color="green" class="white--text" @click="confirm" :disabled="customerCash < getTotal">Confirm</v-btn>
                         </v-flex>
                         <v-flex xs12 ml-2 mr-2>     
-                            <v-btn block color="red" class="white--text" @click="cancel">Close</v-btn>
+                            <v-btn block large color="red" class="white--text" @click="cancel">Close</v-btn>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -127,26 +127,24 @@
                 this.$store.dispatch('products/incrementQty', (cart.id-1))
             },
             purchaseNow() {
-                var signedCustomer = JSON.parse(localStorage.getItem('signedCustomer'))
+                var signedCustomer = this.$store.getters['customers/getSignedCustomer']
 
                 if (signedCustomer !== null && signedCustomer !== undefined) { 
-                    this.$store.getters['customers/getCustomers'].forEach(cust => {
-                        if (cust.key == signedCustomer.key) this.customerCash = cust.credit
-                    })
-                } else {
-                    this.customerCash = 0
+                    // get current cash of customer
+                    this.customerCash = signedCustomer.credit
+
+                    this.msg = "Please Insert Bill/Coin"
+                    this.dialog2 = true
+                    // activate currency acceptors
+                    this.$store.dispatch('sendMessage', { "type": "ACTIVATE_BILL_COIN" })
                 }
-
-                this.msg = "Please Insert Bill/Coin"
-
-                this.dialog2 = true
-                this.$store.dispatch('sendMessage', { "type": "ACTIVATE_BILL_COIN" })
             },
             confirm() {
                 this.dialog2 = false
                 this.dialog3 = true
 
                 var items = []
+                // save customer purchase to database
                 this.$store.getters['cart/getCart'].forEach( c => {
                     items.push(c.id)
                     this.$store.dispatch('transactions/saveTransaction', { 
@@ -155,16 +153,20 @@
                         price: c.price,
                         key: c.key
                     })
-                })                
+                })
 
+                // fall all items that has been purchased
                 this.$store.dispatch('sendMessage', {   "type": "PURCHASE_ITEMS",
                                                         "size": items.length, 
                                                         "items": items
                                                     })
+                // then deactivate currency acceptors
+                this.$store.dispatch('sendMessage', { "type": "DEACTIVATE_BILL_COIN" })
             },
             cancel() {
                 this.customerCash = 0
                 this.dialog2 = false
+                // deactivate currency acceptors
                 this.$store.dispatch('sendMessage', { "type": "DEACTIVATE_BILL_COIN" })
             }
         },
@@ -179,7 +181,7 @@
                 return this.$store.getters.getMessage
             },
             getCustomerCash() {
-                return this.$store.getters['customers/getCustomers']
+                return this.$store.getters['customers/getSignedCustomer']
             },
             getCartCount() {
                 return this.$store.getters['cart/getCart'].length
@@ -189,30 +191,31 @@
             getMsg(val) {
                 if (val !== null && val !== undefined) {
                     if (val.type == "ADD_CASH") {
+                        // update current cash of customer in the database
                         this.$store.dispatch('customers/addCustomersCash', val.cash)
                         this.msg = "Please Insert Bill/Coin"
                     } else if (val.type == "CURRENCY_INFO") {
+                        // display realtime received cash
                         this.msg = "Adding... ₱" + val.msg
                     } else if (val.type == "FALL_ITEMS") {
+                        // +1 if item has been fall
                         this.fallItems++
                     }
                 }
             },
             getCustomerCash(val) {
-                var signedCustomer = JSON.parse(localStorage.getItem('signedCustomer'))
+                var signedCustomer = this.$store.getters['customers/getSignedCustomer']
 
                 if ((val !== null && val !== undefined) && (signedCustomer !== null && signedCustomer !== undefined)) {
-                    val.forEach( cust => {
-                        if (cust.key == signedCustomer.key) this.customerCash = cust.credit
-                    })
-                } else {
-                    this.customerCash = 0
+                    // get current cash of the customer
+                    this.customerCash = val.credit
                 }
             },
             fallItems(val) {
                 if (val >= this.getCartCount) {
                     this.dialog3 = false
                     this.fallItems = 0
+                    // if all items has been fall clear the cart & close
                     this.$store.dispatch('cart/clearCart')
                     this.closeCart()
                 }

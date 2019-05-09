@@ -48,6 +48,7 @@ export default new Vuex.Store({
   },
   actions: {
     sendMessage ({state}, payload) {
+      console.log(payload)
       if(state.socket.isConnected) {
         Vue.prototype.$socket.send(JSON.stringify(payload))
       }

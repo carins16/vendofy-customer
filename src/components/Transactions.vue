@@ -45,17 +45,16 @@
         },
         watch: {
             getTransactions(val) {
-                var signedCustomer = JSON.parse(localStorage.getItem('signedCustomer'))
+                var signedCustomer = this.$store.getters['customers/getSignedCustomer']
 
                 if ((val !== null && val !== undefined) && (signedCustomer !== null && signedCustomer !== undefined)) {
                     var trans = []
                     val.forEach( t => {
-                        if (t.customerKey == signedCustomer.key) {
-                            if (t.dateTrans !== null && t.dateTrans !== undefined) trans.push(t)
-                        }
+                        if (t.dateTrans !== null && t.dateTrans !== undefined) trans.push(t)
                     })
-
                     this.transactions = trans
+                } else {
+                    this.transactions = null
                 }
             }
         }

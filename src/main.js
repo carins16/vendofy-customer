@@ -31,10 +31,14 @@ new Vue({
       messagingSenderId: "1051291964270"
     })
 
-    this.$store.dispatch('customers/fetchCustomers')
     this.$store.dispatch('products/fetchProducts')
-    this.$store.dispatch('transactions/fetchTransactions')
     this.$store.dispatch('config/fetchConfig')
-    setTimeout(() => { this.$store.dispatch('customers/signInCustomers', { fid: 1 }) }, 2000);
+
+    var signedCustomer = this.$store.getters['customers/getSignedCustomer']
+
+    if (signedCustomer != null && signedCustomer != undefined) {
+      this.$store.dispatch('customers/fetchCustomers')
+      this.$store.dispatch('transactions/fetchTransactions')
+    } 
   }
 }).$mount('#app')

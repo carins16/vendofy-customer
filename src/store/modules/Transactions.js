@@ -6,38 +6,46 @@ export default {
         transactions: null
     },
     mutations: {
-        setHistory(state, payload) {
+        setTransactions(state, payload) {
             state.transactions = payload
         }
     },
     actions: {
-        fetchTransactions({commit}) {
-            firebase.firestore().collection('transactions').orderBy('dateTrans', 'desc')
-            .onSnapshot( querySnapshot => {
+        fetchTransactions({rootState, commit}) {
 
-                var transactions = [];
-
-                querySnapshot.forEach( doc => {
-                    transactions.push({
-                        key:    doc.id,
-                        customerKey:       doc.data().customerKey,
-                        dateTrans:      doc.data().dateTrans,
-                        orderedProd:    doc.data().orderedProd,
-                        pic:            doc.data().pic,
-                        price:          doc.data().price
-                    })
-                });
-
-                commit('setHistory', transactions)
-            });
-        },
-        saveTransaction(context, payload) {
-            console.log(payload)
-
-            var customerSigned = JSON.parse(localStorage.getItem('signedCustomer'))
+            // get signed customer data
+            var customerSigned = rootState.customers.signedCustomer
 
             if (customerSigned !== null && customerSigned !== undefined) {
 
+                this.unsubscribeTransactions = firebase.firestore().collection('transactions')
+                .where("customerKey", "==", customerSigned.key)
+                .orderBy("dateTrans", "desc")
+                .onSnapshot( querySnapshot => {
+
+                    var transactions = [];
+
+                    querySnapshot.forEach( doc => {
+                        transactions.push({
+                            key:            doc.id,
+                            customerKey:    doc.data().customerKey,
+                            dateTrans:      doc.data().dateTrans,
+                            orderedProd:    doc.data().orderedProd,
+                            pic:            doc.data().pic,
+                            price:          doc.data().price
+                        })
+                    })
+                    console.log(querySnapshot)
+                    commit('setTransactions', transactions)
+                })
+            }
+        },
+        saveTransaction({rootState}, payload) {
+            // get signed customer data
+            var customerSigned = rootState.customers.signedCustomer
+
+            if (customerSigned !== null && customerSigned !== undefined) {
+                // add to transaction
                 firebase.firestore().collection('transactions').add({
                     customerKey: customerSigned.key,
                     dateTrans: firebase.firestore.FieldValue.serverTimestamp(),
@@ -45,9 +53,11 @@ export default {
                     pic: payload.pic,
                     price: payload.price
                 }).then ( docRef => {
+                    // decrement customers cash
                     firebase.firestore().collection('customers').doc(customerSigned.key).update({
                         credit: firebase.firestore.FieldValue.increment(-payload.price)
                     })
+                    // decrement product qty
                     firebase.firestore().collection('products').doc(payload.key).update({
                         qty: firebase.firestore.FieldValue.increment(-1)
                     })
@@ -56,6 +66,9 @@ export default {
                     console.error("Error adding transaction: ", error);
                 })
             }
+        },
+        clearTransactions({commit}) {
+            commit('setTransactions', null)
         }
     },
     getters: {
