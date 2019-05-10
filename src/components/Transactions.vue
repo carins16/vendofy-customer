@@ -10,13 +10,17 @@
 
                         <v-list-tile-content>
                             <v-list-tile-title>
-                                <p class="title font-weight-regular text-no-wrap text-truncate">
-                                    {{ trans.orderedProd }}
-                                </p>
+                                <v-layout row>
+                                    <v-flex xs10>
+                                        <p class="title font-weight-regular text-no-wrap text-truncate">
+                                            ({{ trans.size }}) {{ trans.descrp }}
+                                        </p>
+                                    </v-flex>
+                                </v-layout>
                             </v-list-tile-title>
                             <v-list-tile-sub-title>
-                                <p class="title font-weight-regular pink--text">
-                                    Php {{ trans.price }}
+                                <p class="title font-weight-regular deep-orange--text">
+                                    ₱ {{ trans.price }}
                                 </p>
                             </v-list-tile-sub-title>
                         </v-list-tile-content>

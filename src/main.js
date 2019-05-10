@@ -28,7 +28,8 @@ new Vue({
       databaseURL: "https://vendofy.firebaseio.com",
       projectId: "vendofy",
       storageBucket: "vendofy.appspot.com",
-      messagingSenderId: "1051291964270"
+      messagingSenderId: "1051291964270",
+      appId: "1:1051291964270:web:2d3f01f012712a8b"
     })
 
     this.$store.dispatch('products/fetchProducts')

@@ -30,8 +30,8 @@
             <!-- Active tab slider indicator -->
             <v-tabs-slider color="yellow"></v-tabs-slider>
             <!-- List of tab items -->
-            <v-tab v-for="item in tabItems" :key="item.id">
-              <v-icon>{{ item.icon }}</v-icon>
+            <v-tab v-for="item in tabItems" :key="item.id" :disabled="item.id == 2 && !isSigned">
+              <v-icon :disabled="item.id == 2 && !isSigned">{{ item.icon }}</v-icon>
               &nbsp;<span>{{ item.name }}</span>
             </v-tab>
           </v-tabs>
@@ -39,7 +39,7 @@
       </v-toolbar>
 
       <!-- tabs content -->
-      <v-tabs-items v-model="tab">
+      <v-tabs-items v-model="tab" :touchless="!isSigned">
         <v-tab-item key="0">
           <v-card flat class="tab-item-wrapper">
             <products/>
@@ -53,7 +53,7 @@
       </v-tabs-items>
 
       <!-- floating cart button -->
-      <v-btn @click="cartDialog = true" large fab bottom right color="green" dark fixed>
+      <v-btn v-if="isSigned" @click="cartDialog = true" large fab bottom right color="green" dark fixed>
         <v-badge color="orange" right overlap>
           <template v-slot:badge>
             <span class="title">{{getCartCount}}</span>
@@ -62,7 +62,7 @@
         </v-badge>
       </v-btn>
 
-      <v-dialog v-model="signOutDialog" max-width="320">
+      <v-dialog v-model="signOutDialog" max-width="360">
         <v-card>
           <v-card-title class="headline">Signing Out</v-card-title>
 
@@ -72,8 +72,8 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="green darken-1" flat="flat" @click="signOut">Yes</v-btn>
-            <v-btn color="green darken-1" flat="flat" @click="signOutDialog = false">No</v-btn>
+            <v-btn color="green darken-1" large flat="flat" @click="signOut">Yes</v-btn>
+            <v-btn color="green darken-1" large flat="flat" @click="signOutDialog = false">No</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -132,7 +132,7 @@
       },
       signOut() {
         this.signOutDialog = false
-
+        this.tab = 0
         // get all items added to cart
         this.$store.getters['cart/getCart'].forEach(c => {
           // roll back items from cart to products

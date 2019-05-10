@@ -30,7 +30,8 @@ export default {
                             key:            doc.id,
                             customerKey:    doc.data().customerKey,
                             dateTrans:      doc.data().dateTrans,
-                            orderedProd:    doc.data().orderedProd,
+                            descrp:         doc.data().descrp,
+                            size:           doc.data().size,
                             pic:            doc.data().pic,
                             price:          doc.data().price
                         })
@@ -47,11 +48,12 @@ export default {
             if (customerSigned !== null && customerSigned !== undefined) {
                 // add to transaction
                 firebase.firestore().collection('transactions').add({
-                    customerKey: customerSigned.key,
-                    dateTrans: firebase.firestore.FieldValue.serverTimestamp(),
-                    orderedProd: payload.orderedProd,
-                    pic: payload.pic,
-                    price: payload.price
+                    customerKey:    customerSigned.key,
+                    dateTrans:      firebase.firestore.FieldValue.serverTimestamp(),
+                    descrp:         payload.descrp,
+                    size:           payload.size,
+                    pic:            payload.pic,
+                    price:          payload.price
                 }).then ( docRef => {
                     // decrement customers cash
                     firebase.firestore().collection('customers').doc(customerSigned.key).update({

@@ -2,9 +2,9 @@
     <v-layout row wrap>
         <v-flex xs6 pa-3 v-for="(product, index) in products" :key="index">
             <v-card>
-                <v-img height="200" :src="product.pic"></v-img>
+                <v-img height="268" :src="product.pic"></v-img>
                 <v-card-text>
-                    <p class="title font-weight-medium pink--text mb-2">Php {{ product.price }}</p>
+                    <p class="title font-weight-medium deep-orange--text mb-2">₱ {{ product.price }}</p>
                     <p class="title font-weight-bold blue--text mb-2 text-no-wrap text-truncate">{{ product.descrp }}</p>
                     <v-layout row>
                         <v-flex xs6>
@@ -14,10 +14,12 @@
                             <p class="subheading font-weight-medium blue-grey--text mb-2 text-xs-right">Quantity: {{ product.qty }}</p>
                         </v-flex>
                     </v-layout>     
-                    <v-btn color="orange" block round class="white--text" @click="addToCart(product, index)" 
+                    <v-btn color="deep-orange" large block round class="white--text" @click="addToCart(product, index)" 
                         :disabled="product.qty <= 0 || (customerIsSigned == null && customerIsSigned == undefined)">
-                        <span v-if="product.qty > 0">Add to Cart</span>
-                        <span v-else>Unavailable</span>
+                        <span v-if="product.qty > 0">
+                            <v-icon>add_shopping_cart</v-icon>&nbsp;Add to Cart
+                        </span>
+                        <span v-else>Out of Stocks</span>
                     </v-btn>               
                 </v-card-text>
             </v-card>

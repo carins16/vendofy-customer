@@ -30,12 +30,12 @@
                                 <v-list-tile-content>
                                     <v-list-tile-title>
                                         <p class="title font-weight-regular text-no-wrap text-truncate">
-                                            {{ cart.descrp }} ({{ cart.size }})
+                                            ({{ cart.size }}) {{ cart.descrp }} 
                                         </p>
                                     </v-list-tile-title>
                                     <v-list-tile-sub-title>
-                                        <p class="title font-weight-regular pink--text">
-                                            Php {{ cart.price }}
+                                        <p class="title font-weight-regular deep-orange--text">
+                                            ₱ {{ cart.price }}
                                         </p>
                                     </v-list-tile-sub-title>
                                 </v-list-tile-content>
@@ -55,10 +55,13 @@
                                     <v-list-tile-content>
                                         <v-list-tile-title>
                                             <p class="title font-weight-bold red--text">
-                                                Total: {{ getTotal }}
+                                                Total: ₱ {{ getTotal }}
                                             </p>
                                         </v-list-tile-title>
                                     </v-list-tile-content>
+                                    <v-list-tile-action>
+                                        <v-btn color="grey" large flat @click="clearCart">Clear All</v-btn>
+                                    </v-list-tile-action>
                                 </v-list-tile>
                             </template>
 
@@ -68,19 +71,19 @@
             </v-card>
         </v-dialog>
         <!-- Currency Dialog -->
-        <v-dialog v-model="dialog2" persistent max-width="290">
+        <v-dialog v-model="dialog2" persistent max-width="320">
             <v-card>
                 <v-container fluid>
                     <v-layout align-center justify-center column fill-height>
                         <v-flex xs12 mt-3>
-                            <v-progress-circular :size="150" :width="15" color="blue" indeterminate>
-                                <center>
-                                    <span class="title font-weight-bold blue--text">{{customerCash}}/{{getTotal}}</span>
-                                </center>
-                            </v-progress-circular>
+                            <center>
+                                <span class="display-1 font-weight-bold" v-bind:class="[moneyColor]">
+                                    ₱ {{customerCash}}/{{getTotal}}
+                                </span>
+                            </center>
                         </v-flex>
                         <v-flex xs12 mt-4 mb-4>
-                            <span class="title font-weight-medium blue--text">
+                            <span class="headline font-weight-medium blue--text">
                                 {{msg}}
                             </span>
                         </v-flex>
@@ -116,6 +119,7 @@
             dialog3: false,
             customerCash: 0,
             msg: 'Please Insert Bill/Coin',
+            moneyColor: 'red--text',
             fallItems: 0
         }),
         methods: {
@@ -139,6 +143,17 @@
                     this.$store.dispatch('sendMessage', { "type": "ACTIVATE_BILL_COIN" })
                 }
             },
+            clearCart() {
+                // get all items added to cart
+                this.$store.getters['cart/getCart'].forEach(c => {
+                // roll back items from cart to products
+                this.$store.dispatch('products/incrementQty', (c.id-1))
+                })
+
+                // clear the cart
+                this.$store.dispatch('cart/clearCart')
+                this.closeCart()
+            },
             confirm() {
                 this.dialog2 = false
                 this.dialog3 = true
@@ -148,10 +163,11 @@
                 this.$store.getters['cart/getCart'].forEach( c => {
                     items.push(c.id)
                     this.$store.dispatch('transactions/saveTransaction', { 
-                        orderedProd: c.descrp + "(" + c.size + ")",
+                        key: c.key,
+                        descrp: c.descrp,
+                        size: c.size,
                         pic: c.pic,
-                        price: c.price,
-                        key: c.key
+                        price: c.price
                     })
                 })
 
