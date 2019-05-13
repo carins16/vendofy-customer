@@ -91,6 +91,12 @@
         </v-card>
       </v-dialog>
 
+      <!-- Snackbar -->
+      <v-snackbar v-model="snackbarStatus" bottom left auto-height color="info">
+        <span class="subheading">{{ snackbarMsg }}</span>
+        <v-btn color="white" flat @click="snackbarStatus = false">Close</v-btn>
+      </v-snackbar>
+
     </div>
   </v-app>
 </template>
@@ -122,7 +128,9 @@
       isSigned: false,
       signedCustomer: null,
       signOutDialog: false,
-      reconDialog: false
+      reconDialog: false,
+      snackbarStatus: false,
+      snackbarMsg: ''
     }),
     methods: {
       openSignInDialog() {
@@ -165,6 +173,9 @@
       },
       getMsg() {
         return this.$store.getters.getMessage
+      },
+      getNotify() {
+        return this.$store.getters.getNotify
       }
     },
     watch: {
@@ -207,6 +218,20 @@
           // alarm has been trigger from vending machine
           if (val.type == "ALARM_ON") this.$store.dispatch('config/updateAlarm', true)
         }
+      },
+      getNotify(val) {
+        if (val !== null && val !== undefined) {
+          if (val !== '') {
+            this.snackbarMsg = val
+            this.snackbarStatus = true
+          } else {
+            this.snackbarMsg = ''
+          }
+        }
+      },
+      snackbarStatus(val) {
+        // clear the msg after snackbar disappear
+        if (val == false) this.$store.dispatch('showNotify', '')
       }
     },
     mounted() {

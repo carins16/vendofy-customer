@@ -26,17 +26,18 @@ export default {
                     var transactions = [];
 
                     querySnapshot.forEach( doc => {
-                        transactions.push({
-                            key:            doc.id,
-                            customerKey:    doc.data().customerKey,
-                            dateTrans:      doc.data().dateTrans,
-                            descrp:         doc.data().descrp,
-                            size:           doc.data().size,
-                            pic:            doc.data().pic,
-                            price:          doc.data().price
-                        })
+                        if (doc.data().dateTrans !== null && doc.data().dateTrans !== undefined) {
+                            transactions.push({
+                                key:            doc.id,
+                                customerKey:    doc.data().customerKey,
+                                dateTrans:      doc.data().dateTrans.seconds,
+                                descrp:         doc.data().descrp,
+                                size:           doc.data().size,
+                                pic:            doc.data().pic,
+                                price:          doc.data().price
+                            })
+                        }
                     })
-                    console.log(querySnapshot)
                     commit('setTransactions', transactions)
                 })
             }
@@ -55,17 +56,18 @@ export default {
                     pic:            payload.pic,
                     price:          payload.price
                 }).then ( docRef => {
-                    // decrement customers cash
-                    firebase.firestore().collection('customers').doc(customerSigned.key).update({
-                        credit: firebase.firestore.FieldValue.increment(-payload.price)
-                    })
-                    // decrement product qty
-                    firebase.firestore().collection('products').doc(payload.key).update({
-                        qty: firebase.firestore.FieldValue.increment(-1)
-                    })
                     console.log("Transaction written with ID: ", docRef.id);
                 }).catch( error => {
                     console.error("Error adding transaction: ", error);
+                })
+
+                // decrement customers cash
+                firebase.firestore().collection('customers').doc(customerSigned.key).update({
+                    credit: firebase.firestore.FieldValue.increment(-payload.price)
+                })
+                // decrement product qty
+                firebase.firestore().collection('products').doc(payload.key).update({
+                    qty: firebase.firestore.FieldValue.increment(-1)
                 })
             }
         },

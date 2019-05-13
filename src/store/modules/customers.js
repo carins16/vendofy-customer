@@ -11,7 +11,7 @@ export default {
         }
     },
     actions: {
-        registerCustomers (context, payload) {
+        registerCustomers ({dispatch}, payload) {
             firebase.firestore().collection('customers').add({
                 fid: payload.fid,
                 name: payload.name,
@@ -19,6 +19,8 @@ export default {
                 regDate: firebase.firestore.FieldValue.serverTimestamp()
             }).then ( docRef => {
                 console.log("Customer written with ID: ", docRef.id);
+                // pop up successful registration msg
+                dispatch('showNotify', "Registration successful. Please press sign-in", { root: true })
             }).catch( error => {
                 console.error("Error adding customer: ", error);
             })
@@ -46,7 +48,6 @@ export default {
                         regDate:    doc.data().regDate,
                         credit:     doc.data().credit
                     })
-                    console.log(doc.data())
                 })
             }
         },
@@ -77,15 +78,25 @@ export default {
                         dispatch("fetchCustomers")
                         // attach listener for customer transaction data
                         dispatch('transactions/fetchTransactions', null, { root: true })
+                        // pop up welcome msg to customer signed in
+                        dispatch('showNotify', "Welcome, " + doc.data().name, { root: true })
                     }
                 })
             })
         },
-        signOutCustomer ({commit}) {
-            commit('setSignedCustomer', null)
-            localStorage.removeItem('signedCustomer')
-            this.unsubscribeCustomer() // detach customer listener
-            this.unsubscribeTransactions() // detach customer transaction listener
+        signOutCustomer ({dispatch, state, commit}) {
+
+            var customerSigned = state.signedCustomer
+
+            if (customerSigned !== null && customerSigned !== undefined) {
+                // pop up goodbye msg to the customer
+                dispatch('showNotify', "Goodbye, " + customerSigned.name, { root: true })
+
+                commit('setSignedCustomer', null)
+                localStorage.removeItem('signedCustomer')
+                this.unsubscribeCustomer() // detach customer listener
+                this.unsubscribeTransactions() // detach customer transaction listener
+            }
         }
     },
     getters: {

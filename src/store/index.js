@@ -5,6 +5,7 @@ import products from './modules/products'
 import cart from './modules/cart'
 import transactions from './modules/transactions'
 import config from './modules/config'
+import firebase from 'firebase'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,9 @@ export default new Vuex.Store({
       isConnected: false,
       message: '',
       reconnectError: false,
-    }
+    },
+    notify: '',
+
   },
   mutations:{
     SOCKET_ONOPEN (state, event)  {
@@ -43,8 +46,11 @@ export default new Vuex.Store({
       console.info(state, count)
     },
     SOCKET_RECONNECT_ERROR(state) {
-      state.socket.reconnectError = true;
+      state.socket.reconnectError = true
     },
+    setNotify(state, msg) {
+      state.notify = msg
+    }
   },
   actions: {
     sendMessage ({state}, payload) {
@@ -52,6 +58,33 @@ export default new Vuex.Store({
       if(state.socket.isConnected) {
         Vue.prototype.$socket.send(JSON.stringify(payload))
       }
+    },
+    showNotify ({commit}, msg) {
+      commit('setNotify', msg)
+    },
+    firebaseConnection () {
+      // ref for connection status and last seen online
+      var myConnectionsRef = firebase.database().ref('vm/connection')
+      var lastOnlineRef = firebase.database().ref('vm/lastOnline')
+
+      firebase.database().ref(".info/connected").on("value", snap => {
+        if (snap.val() === true) {
+          // when connected or reconnected, set connection to true
+          myConnectionsRef.set(true)
+          lastOnlineRef.set('') // set null if connected
+
+          // set connection to false when disconnected
+          myConnectionsRef.onDisconnect().set(false)
+          // when disconnected, update the last time that vending machine was seen online
+          lastOnlineRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP)
+
+          console.log("Connected!")
+
+        } else {
+          console.log("Disconnected!")
+        }
+      })
+
     }
   },
   getters: {
@@ -60,6 +93,9 @@ export default new Vuex.Store({
     },
     getConnection: state => {
       return state.socket.isConnected
+    },
+    getNotify: state => {
+      return state.notify
     }
   }
 })

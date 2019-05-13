@@ -23,6 +23,7 @@
     "vue-moment": "^4.0.0",
     "vue-native-websocket": "^2.0.13",
     "vue-router": "^3.0.6",
+    "vue-timeago": "^5.1.2",
     "vuelidate": "^0.7.4",
     "vuetify": "^1.5.14",
     "vuex": "^3.0.1"

@@ -24,7 +24,13 @@
                         <v-list>
                             <v-list-tile v-for="(cart, index) in getCart" :key="index" avatar>
                                 <v-list-tile-avatar>
-                                    <v-img height="36" :src="cart.pic"></v-img>
+                                    <v-img height="36" :src="cart.pic">
+                                        <template v-slot:placeholder>
+                                            <v-layout fill-height align-center justify-center ma-0 >
+                                                <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
+                                            </v-layout>
+                                        </template>
+                                    </v-img>
                                 </v-list-tile-avatar>
 
                                 <v-list-tile-content>
@@ -71,7 +77,7 @@
             </v-card>
         </v-dialog>
         <!-- Currency Dialog -->
-        <v-dialog v-model="dialog2" persistent max-width="320">
+        <v-dialog v-model="dialog2" persistent max-width="360">
             <v-card>
                 <v-container fluid>
                     <v-layout align-center justify-center column fill-height>
@@ -137,7 +143,6 @@
                     // get current cash of customer
                     this.customerCash = signedCustomer.credit
 
-                    this.msg = "Please Insert Bill/Coin"
                     this.dialog2 = true
                     // activate currency acceptors
                     this.$store.dispatch('sendMessage', { "type": "ACTIVATE_BILL_COIN" })
@@ -152,7 +157,6 @@
 
                 // clear the cart
                 this.$store.dispatch('cart/clearCart')
-                this.closeCart()
             },
             confirm() {
                 this.dialog2 = false
@@ -209,7 +213,6 @@
                     if (val.type == "ADD_CASH") {
                         // update current cash of customer in the database
                         this.$store.dispatch('customers/addCustomersCash', val.cash)
-                        this.msg = "Please Insert Bill/Coin"
                     } else if (val.type == "CURRENCY_INFO") {
                         // display realtime received cash
                         this.msg = "Adding... ₱" + val.msg
@@ -234,6 +237,17 @@
                     // if all items has been fall clear the cart & close
                     this.$store.dispatch('cart/clearCart')
                     this.closeCart()
+                    // pop up successful transaction msg
+                    this.$store.dispatch('showNotify', "Transaction successful. Please see purchase history")
+                }
+            },
+            customerCash (val) {
+                if (val < this.getTotal) {
+                    this.moneyColor = 'red--text'
+                    this.msg = "Please Insert Bill/Coin"
+                } else {
+                    this.moneyColor = 'green--text'
+                    this.msg = "Press confirm to continue."
                 }
             }
         }

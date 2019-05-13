@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 Vue.use(VueNativeSock, 'ws://192.168.137.100:81', { 
   store: store,
   reconnection: true,
-  reconnectionDelay: 1000
+  reconnectionDelay: 3000
 })
 
 Vue.use(require('vue-moment'));
@@ -22,6 +22,7 @@ new Vue({
   store,
   render: h => h(App),
   created() {
+    // initialize firebase
     firebase.initializeApp({
       apiKey: "AIzaSyBf1VjLPZpSoptX4uT_6HmbwFfXIldNGIQ",
       authDomain: "vendofy.firebaseapp.com",
@@ -32,6 +33,10 @@ new Vue({
       appId: "1:1051291964270:web:2d3f01f012712a8b"
     })
 
+    // connectivity to firebase
+    this.$store.dispatch('firebaseConnection')
+
+    // fetch list of products
     this.$store.dispatch('products/fetchProducts')
     this.$store.dispatch('config/fetchConfig')
 

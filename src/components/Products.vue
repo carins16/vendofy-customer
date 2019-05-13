@@ -2,7 +2,13 @@
     <v-layout row wrap>
         <v-flex xs6 pa-3 v-for="(product, index) in products" :key="index">
             <v-card>
-                <v-img height="268" :src="product.pic"></v-img>
+                <v-img height="268" :src="product.pic">
+                    <template v-slot:placeholder>
+                        <v-layout fill-height align-center justify-center ma-0 >
+                            <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
+                        </v-layout>
+                    </template>
+                </v-img>
                 <v-card-text>
                     <p class="title font-weight-medium deep-orange--text mb-2">₱ {{ product.price }}</p>
                     <p class="title font-weight-bold blue--text mb-2 text-no-wrap text-truncate">{{ product.descrp }}</p>
