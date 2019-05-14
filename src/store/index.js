@@ -23,8 +23,13 @@ export default new Vuex.Store({
       message: '',
       reconnectError: false,
     },
-    notify: '',
-
+    authentication: {
+      isAuthenticated: (localStorage.getItem('auth') !== null)? true : false,
+      authKey: localStorage.getItem('auth'),
+      authError: null
+    },
+    firebaseIsConnected: false,
+    notify: ''
   },
   mutations:{
     SOCKET_ONOPEN (state, event)  {
@@ -50,6 +55,17 @@ export default new Vuex.Store({
     },
     setNotify(state, msg) {
       state.notify = msg
+    },
+    setFirebaseConnection(state, status) {
+      state.firebaseIsConnected = status
+    },
+    setAuthError (state, err) {
+      state.authentication.authError = err
+    },
+    setAuthOK (state, payload) {
+      state.authentication.isAuthenticated = payload.status
+      state.authentication.authKey = payload.uid
+      console.log(payload)
     }
   },
   actions: {
@@ -62,7 +78,7 @@ export default new Vuex.Store({
     showNotify ({commit}, msg) {
       commit('setNotify', msg)
     },
-    firebaseConnection () {
+    connectFirebase ({commit}) {
       // ref for connection status and last seen online
       var myConnectionsRef = firebase.database().ref('vm/connection')
       var lastOnlineRef = firebase.database().ref('vm/lastOnline')
@@ -78,13 +94,53 @@ export default new Vuex.Store({
           // when disconnected, update the last time that vending machine was seen online
           lastOnlineRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP)
 
+          commit('setFirebaseConnection', true)
           console.log("Connected!")
-
         } else {
+          commit('setFirebaseConnection', false)
           console.log("Disconnected!")
         }
       })
-
+    },
+    authenticate ({dispatch, commit}, payload) {
+      // authenticate the vending machine
+      firebase.auth().signInWithEmailAndPassword(
+        payload.email,
+        payload.password
+      ).then( res => {
+        // set authentication success
+        commit('setAuthOK', {
+          uid: res.user.uid,
+          status: true
+        })
+        localStorage.setItem('auth', res.user.uid)
+        dispatch('showNotify', "Vendofy successfully authenticated.", { root: true })
+      }).catch(err => {
+        // set authentication error and return error message
+        commit('setAuthError', err)
+      })
+    },
+    authenticated ({dispatch, commit}, payload) {
+      // set authentication as successful
+      commit('setAuthOK', {
+        uid: payload.uid,
+        status: true
+      })
+      dispatch('showNotify', "Vendofy successfully authenticated.", { root: true })
+      // fetch products and initial config
+      dispatch('products/fetchProducts', null, { root: true })
+      dispatch('config/fetchConfig', null, { root: true })
+    },
+    unauthenticated({commit}) {
+      firebase.auth().signOut().then(() => {
+        commit('setAuthOK', {
+          uid: null,
+          status: false
+        })
+        localStorage.removeItem('auth')
+      }).catch(error => {
+        console.log(error)
+      })
     }
   },
   getters: {
@@ -96,6 +152,15 @@ export default new Vuex.Store({
     },
     getNotify: state => {
       return state.notify
+    },
+    getFirebaseConnection: state => {
+      return state.firebaseIsConnected
+    },
+    getAuthError: state => {
+      return state.authentication.authError
+    },
+    getAuthStatus: state => {
+      return state.authentication.isAuthenticated
     }
   }
 })

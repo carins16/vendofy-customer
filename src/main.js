@@ -33,18 +33,14 @@ new Vue({
       appId: "1:1051291964270:web:2d3f01f012712a8b"
     })
 
+    firebase.auth().onAuthStateChanged( res => {
+      if(res) {
+        this.$store.dispatch('authenticated', { uid: res.uid })
+      } else {
+        this.$store.dispatch('unauthenticated')
+      }
+    })
     // connectivity to firebase
-    this.$store.dispatch('firebaseConnection')
-
-    // fetch list of products
-    this.$store.dispatch('products/fetchProducts')
-    this.$store.dispatch('config/fetchConfig')
-
-    var signedCustomer = this.$store.getters['customers/getSignedCustomer']
-
-    if (signedCustomer != null && signedCustomer != undefined) {
-      this.$store.dispatch('customers/fetchCustomers')
-      this.$store.dispatch('transactions/fetchTransactions')
-    } 
+    // this.$store.dispatch('connectFirebase')
   }
 }).$mount('#app')

@@ -62,14 +62,20 @@
         </v-badge>
       </v-btn>
 
+      <register :dialog="regDialog" @close-register='regDialog = false'/>
+      <sign-in :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
+      <cart :dialog="cartDialog" @close-cart="cartDialog = false"/>
+      <authenticate :dialog="authDialog" @close-auth="authDialog = false"/>
+
+      <!-- Signing out dialog -->
       <v-dialog v-model="signOutDialog" max-width="360">
         <v-card>
           <v-card-title class="headline">Signing Out</v-card-title>
-
           <v-card-text>
-            <span class="subheading font-weight-regular">Are you sure do you want to sign out ?</span>
+            <span class="subheading font-weight-regular">
+              Are you sure do you want to sign out ?
+            </span>
           </v-card-text>
-
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="green darken-1" large flat="flat" @click="signOut">Yes</v-btn>
@@ -78,14 +84,21 @@
         </v-card>
       </v-dialog>
 
-      <register :dialog="regDialog" @close-register='regDialog = false'/>
-      <sign-in :dialog="signInDialog" @close-sign-in='signInDialog = false'/>
-      <cart :dialog="cartDialog" @close-cart="cartDialog = false"/>
-
-      <v-dialog v-model="reconDialog" persistent width="300">
+      <!-- Vending machine connectivity dialog -->
+      <v-dialog v-model="reconDialog" persistent width="400">
         <v-card color="green" dark>
           <v-card-text>
-            <span class="subheading font-weight-regular">Connecting to vending machine . . .</span>
+            <span class="title font-weight-regular">Connecting to vending machine . . .</span>
+            <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <!-- Firebase connectivity dialog -->
+      <v-dialog v-model="firebaseConnDialog" persistent width="400">
+        <v-card color="blue" dark>
+          <v-card-text>
+            <span class="title font-weight-regular">Connecting to Google Firebase . . .</span>
             <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
           </v-card-text>
         </v-card>
@@ -107,6 +120,7 @@
   import Products from '@/components/Products'
   import Transactions from '@/components/Transactions'
   import Cart from '@/components/CartDialog'
+  import Authenticate from '@/components/AuthDialog'
 
   export default {
     components: {
@@ -114,12 +128,17 @@
       SignIn,
       Products,
       Transactions,
-      Cart
+      Cart,
+      Authenticate
     },
     data: () => ({
       regDialog: false,
       signInDialog: false,
       cartDialog: false,
+      signOutDialog: false,
+      reconDialog: false,
+      firebaseConnDialog: false,
+      authDialog: false,
       tab: null,
       tabItems: [
         { id: 1, name: 'Products',  icon: 'business_center'},
@@ -127,10 +146,8 @@
       ],
       isSigned: false,
       signedCustomer: null,
-      signOutDialog: false,
-      reconDialog: false,
       snackbarStatus: false,
-      snackbarMsg: ''
+      snackbarMsg: '',
     }),
     methods: {
       openSignInDialog() {
@@ -176,6 +193,9 @@
       },
       getNotify() {
         return this.$store.getters.getNotify
+      },
+      getAuthenticationStatus() {
+        return this.$store.getters.getAuthStatus
       }
     },
     watch: {
@@ -232,17 +252,20 @@
       snackbarStatus(val) {
         // clear the msg after snackbar disappear
         if (val == false) this.$store.dispatch('showNotify', '')
+      },
+      getAuthenticationStatus(val) {
+        if (val !== null && val !== undefined) {
+          this.authDialog = !val
+        } 
       }
     },
     mounted() {
-      var val = this.$store.getters['customers/getSignedCustomer']
+      // check if the vending machine is authenticated else prompt authentication dialog
+      var status = this.$store.getters.getAuthStatus
 
-      if (val !== null && val !== undefined) {
-        this.signedCustomer = val.name
-        this.isSigned = true
-      } else {
-        this.isSigned = false
-      }
+      if (status !== null && status !== undefined) {
+        this.authDialog = !status
+      } 
     }
   }
 </script>

@@ -3,7 +3,7 @@ import firebase from 'firebase'
 export default {
     namespaced: true,
     state: {
-        signedCustomer: JSON.parse(localStorage.getItem('signedCustomer'))
+        signedCustomer: null
     },
     mutations: {
         setSignedCustomer (state, payload) {
@@ -66,14 +66,6 @@ export default {
                             regDate:    doc.data().regDate,
                             credit:     doc.data().credit
                         })
-                        // store in localstorage
-                        localStorage.setItem('signedCustomer', JSON.stringify({ 
-                            key:        doc.id,
-                            fid:        doc.data().fid,
-                            name:       doc.data().name,
-                            regDate:    doc.data().regDate,
-                            credit:     doc.data().credit
-                        }))
                         // attach listener for customer data
                         dispatch("fetchCustomers")
                         // attach listener for customer transaction data
@@ -93,7 +85,6 @@ export default {
                 dispatch('showNotify', "Goodbye, " + customerSigned.name, { root: true })
 
                 commit('setSignedCustomer', null)
-                localStorage.removeItem('signedCustomer')
                 this.unsubscribeCustomer() // detach customer listener
                 this.unsubscribeTransactions() // detach customer transaction listener
             }

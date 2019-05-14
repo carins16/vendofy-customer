@@ -4,7 +4,7 @@
             <v-card>
                 <!-- Header toolbar -->
                 <v-toolbar dark color="green">
-                    <v-btn icon dark @click="closeReg">
+                    <v-btn icon large dark @click="closeReg">
                         <v-icon>close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Register</v-toolbar-title>
@@ -28,7 +28,7 @@
                                 </v-text-field>
                             </v-flex>
                             <v-flex xs12>
-                                <v-btn color="primary" @click="stepper().next()">Next</v-btn>
+                                <v-btn color="primary" large @click="stepper().next()">Next</v-btn>
                             </v-flex>
                         </v-layout>
                     </v-stepper-content>
@@ -43,8 +43,8 @@
                                 <v-icon color="blue-grey" size="100">fingerprint</v-icon>
                             </v-flex>
                             <v-flex xs12 mt-2>
-                                <v-btn color="primary" @click="stepper().next()">Scan</v-btn>
-                                <v-btn @click="e6 = 1">Back</v-btn>
+                                <v-btn large color="primary" @click="stepper().next()">Scan</v-btn>
+                                <v-btn large @click="e6 = 1">Back</v-btn>
                             </v-flex>
                         </v-layout>
                     </v-stepper-content>
