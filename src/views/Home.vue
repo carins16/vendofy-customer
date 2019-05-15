@@ -132,13 +132,13 @@
       Authenticate
     },
     data: () => ({
+      reconDialog: true,
+      authDialog: false,
+      firebaseConnDialog: false,
       regDialog: false,
       signInDialog: false,
       cartDialog: false,
       signOutDialog: false,
-      reconDialog: false,
-      firebaseConnDialog: false,
-      authDialog: false,
       tab: null,
       tabItems: [
         { id: 1, name: 'Products',  icon: 'business_center'},
@@ -151,9 +151,8 @@
     }),
     methods: {
       openSignInDialog() {
-        // this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
-        // this.signInDialog = true
-        this.$store.dispatch('customers/signInCustomers', { fid: 1 })
+        this.$store.dispatch('sendMessage', { "type": "VERIFY_FINGERPRINT" })
+        this.signInDialog = true
       },
       signOut() {
         this.signOutDialog = false
@@ -196,6 +195,9 @@
       },
       getAuthenticationStatus() {
         return this.$store.getters.getAuthStatus
+      },
+      getFirebaseConnectionStatus() {
+        return this.$store.getters.getFirebaseConnection
       }
     },
     watch: {
@@ -228,6 +230,21 @@
         if (val !== null && val !== undefined) {
           if (val) {
             this.reconDialog = false
+            // check if the vending machine is authenticated else prompt authentication dialog
+            var status = this.$store.getters.getAuthStatus
+
+            if (status !== null && status !== undefined) {
+              if (status == true) {
+                this.authDialog = false
+                // check the connectivity to the firebase
+                var firebaseConn = this.$store.getters.getFirebaseConnection
+                if (firebaseConn !== null && val !== firebaseConn) {
+                  this.firebaseConnDialog = !firebaseConn
+                }
+              } else {
+                this.authDialog = true
+              }
+            }
           } else {
             this.reconDialog = true
           }
@@ -257,15 +274,12 @@
         if (val !== null && val !== undefined) {
           this.authDialog = !val
         } 
+      },
+      getFirebaseConnectionStatus(val) {
+        if (val !== null && val !== undefined) {
+          this.firebaseConnDialog = !val
+        } 
       }
-    },
-    mounted() {
-      // check if the vending machine is authenticated else prompt authentication dialog
-      var status = this.$store.getters.getAuthStatus
-
-      if (status !== null && status !== undefined) {
-        this.authDialog = !status
-      } 
     }
   }
 </script>

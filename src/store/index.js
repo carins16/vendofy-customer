@@ -102,19 +102,14 @@ export default new Vuex.Store({
         }
       })
     },
-    authenticate ({dispatch, commit}, payload) {
+    authenticate ({commit}, payload) {
       // authenticate the vending machine
       firebase.auth().signInWithEmailAndPassword(
         payload.email,
         payload.password
       ).then( res => {
-        // set authentication success
-        commit('setAuthOK', {
-          uid: res.user.uid,
-          status: true
-        })
+        // store auth in localstorage
         localStorage.setItem('auth', res.user.uid)
-        dispatch('showNotify', "Vendofy successfully authenticated.", { root: true })
       }).catch(err => {
         // set authentication error and return error message
         commit('setAuthError', err)
@@ -127,6 +122,8 @@ export default new Vuex.Store({
         status: true
       })
       dispatch('showNotify', "Vendofy successfully authenticated.", { root: true })
+      // connectivity to firebase
+      dispatch('connectFirebase')
       // fetch products and initial config
       dispatch('products/fetchProducts', null, { root: true })
       dispatch('config/fetchConfig', null, { root: true })

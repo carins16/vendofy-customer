@@ -5,29 +5,31 @@
                 Authentication
             </v-card-title>
             <v-divider></v-divider>
-            <v-container>
-                <v-layout wrap>
-                    <v-flex xs12 ml-3 mr-3>
-                        <v-text-field prepend-icon="lock" 
-                                    label="Password" 
-                                    type="password" 
-                                    v-model="password" 
-                                    :error-messages="passwordErrors"
-                                    required 
-                                    @input="$v.password.$touch()"
-                                    @blur="$v.password.$touch()">
-                        </v-text-field>
-                        <v-alert v-model="alert" dismissible type="error">
-                            {{ errorMsg }}
-                        </v-alert>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-            <v-divider></v-divider>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn type="submit" color="blue" dark large :loading="loading" @click="onConnect">Connect</v-btn>
-            </v-card-actions>
+            <v-form v-on:submit.prevent="onConnect">
+                <v-container>
+                    <v-layout wrap>
+                        <v-flex xs12 ml-3 mr-3>
+                            <v-text-field prepend-icon="lock" 
+                                        label="Password" 
+                                        type="password" 
+                                        v-model="password" 
+                                        :error-messages="passwordErrors"
+                                        required 
+                                        @input="$v.password.$touch()"
+                                        @blur="$v.password.$touch()">
+                            </v-text-field>
+                            <v-alert v-model="alert" dismissible type="error">
+                                {{ errorMsg }}
+                            </v-alert>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn type="submit" color="blue" dark large :loading="loading" @click="onConnect">Connect</v-btn>
+                </v-card-actions>
+            </v-form>
         </v-card>
     </v-dialog>
 </template>
@@ -71,6 +73,9 @@
                     } else if (val.code == "auth/too-many-requests") {
                         this.alert = true
                         this.errorMsg = "Too many attempts. Try again later"
+                    } else if (val.code == "auth/network-request-failed") {
+                        this.alert = true
+                        this.errorMsg = "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
                     }
                 }
             },

@@ -22,6 +22,10 @@ new Vue({
   store,
   render: h => h(App),
   created() {
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+      if (window.StatusBar) window.StatusBar.hide();
+    }
     // initialize firebase
     firebase.initializeApp({
       apiKey: "AIzaSyBf1VjLPZpSoptX4uT_6HmbwFfXIldNGIQ",
@@ -40,7 +44,5 @@ new Vue({
         this.$store.dispatch('unauthenticated')
       }
     })
-    // connectivity to firebase
-    // this.$store.dispatch('connectFirebase')
   }
 }).$mount('#app')

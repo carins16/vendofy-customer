@@ -15,22 +15,24 @@
                         Customer Information
                     </v-stepper-step>
                     <v-stepper-content step="1">
-                        <v-layout wrap>
-                            <v-flex xs12 ml-2 mr-5>
-                                <v-text-field label="Enter your name . . ." 
-                                            v-model="customerName" 
-                                            counter="30"
-                                            maxlength="30" 
-                                            :error-messages="customerNameErrors" 
-                                            @input="$v.customerName.$touch()" 
-                                            @blur="$v.customerName.$touch()" 
-                                            required>
-                                </v-text-field>
-                            </v-flex>
-                            <v-flex xs12>
-                                <v-btn color="primary" large @click="stepper().next()">Next</v-btn>
-                            </v-flex>
-                        </v-layout>
+                        <v-form v-on:submit.prevent="stepper().next()">
+                            <v-layout wrap>
+                                <v-flex xs12 ml-2 mr-5>
+                                    <v-text-field label="Enter your name . . ." 
+                                                v-model="customerName" 
+                                                counter="30"
+                                                maxlength="30" 
+                                                :error-messages="customerNameErrors" 
+                                                @input="$v.customerName.$touch()" 
+                                                @blur="$v.customerName.$touch()" 
+                                                required>
+                                    </v-text-field>
+                                </v-flex>
+                                <v-flex xs12>
+                                    <v-btn color="primary" large @click="stepper().next()">Next</v-btn>
+                                </v-flex>
+                            </v-layout>
+                        </v-form>
                     </v-stepper-content>
 
                     <v-stepper-step :complete="e6 > 2" step="2">
