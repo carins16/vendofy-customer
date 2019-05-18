@@ -255,8 +255,6 @@
           // alarm has been trigger from vending machine
           if (val.type == "ALARM_ON") {
             this.$store.dispatch('config/updateAlarm', true)
-          } else if (val.type == "PIR") {
-            this.$store.dispatch('config/countVisitors')
           }
         }
       },

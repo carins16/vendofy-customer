@@ -32,11 +32,6 @@ export default {
                 // The document probably doesn't exist.
                 console.error("Error updating alarm: ", error);
             });
-        },
-        countVisitors() {
-            firebase.firestore().collection('config').doc('DYoThSRAElmX50fQI6jB').update({
-                visitors: firebase.firestore.FieldValue.increment(1)
-            })
         }
     },
     getters: {
