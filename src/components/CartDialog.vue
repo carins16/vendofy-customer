@@ -99,7 +99,9 @@
                             <v-btn block large color="green" class="white--text" @click="confirm" :disabled="customerCash < getTotal">Confirm</v-btn>
                         </v-flex>
                         <v-flex xs12 ml-2 mr-2>     
-                            <v-btn block large color="red" class="white--text" @click="cancel">Close</v-btn>
+                            <v-btn block large color="red" class="white--text" @click="cancel" :disabled="!canClose">
+                                <span v-if="value > 0">({{value}})</span>&nbsp;Close
+                            </v-btn>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -118,6 +120,7 @@
 </template>
 
 <script>
+    import { clearInterval } from 'timers';
     export default {
         props: ['dialog'],
         data: () => ({
@@ -126,8 +129,21 @@
             customerCash: 0,
             msg: 'Please Insert Bill/Coin',
             moneyColor: 'red--text',
-            fallItems: 0
+            fallItems: 0,
+            canClose: false,
+            interval: {},
+            value: 0
         }),
+        beforeDestroy () {
+            clearInterval(this.interval)
+        },
+        mounted () {
+            this.interval = setInterval(() => {
+                if (this.value > 0) {
+                    this.value--
+                }
+            }, 1000)
+        },
         methods: {
             closeCart: function () {
                 this.$emit("close-cart")
@@ -144,8 +160,17 @@
                     this.customerCash = signedCustomer.credit
 
                     this.dialog2 = true
+                    this.canClose = false
+                    this.value = 3
+
                     // activate currency acceptors
                     this.$store.dispatch('sendMessage', { "type": "ACTIVATE_BILL_COIN" })
+
+                    // wait 3 sec before enable close
+                    setTimeout(() => {
+                        this.canClose = true
+                        console.log("interval has been cleared.")
+                    }, 3000);
                 }
             },
             clearCart() {
@@ -212,10 +237,17 @@
                 if (val !== null && val !== undefined) {
                     if (val.type == "ADD_CASH") {
                         // update current cash of customer in the database
+                        this.canClose = true
                         this.$store.dispatch('customers/addCustomersCash', val.cash)
                     } else if (val.type == "CURRENCY_INFO") {
                         // display realtime received cash
-                        this.msg = "Adding... ₱" + val.msg
+                        if (val.msg !== null && val.msg !== undefined) {
+                            if (val.msg > 5) {
+                                this.msg = "Adding... ₱" + val.msg
+                                this.canClose = false
+                            }
+                        }
+                        console.log(val.msg)
                     } else if (val.type == "FALL_ITEMS") {
                         // +1 if item has been fall
                         this.fallItems++

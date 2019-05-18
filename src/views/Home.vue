@@ -220,9 +220,9 @@
       getLockStatus(val) {
         if (val !== null && val !== undefined) {
           if (val) {
-            this.$store.dispatch('sendMessage', { "type": "LOCK_OFF" })
-          } else {
             this.$store.dispatch('sendMessage', { "type": "LOCK_ON" })
+          } else {
+            this.$store.dispatch('sendMessage', { "type": "LOCK_OFF" })
           }
         }
       },
@@ -253,7 +253,11 @@
       getMsg(val) {
         if (val !== null && val !== undefined) {
           // alarm has been trigger from vending machine
-          if (val.type == "ALARM_ON") this.$store.dispatch('config/updateAlarm', true)
+          if (val.type == "ALARM_ON") {
+            this.$store.dispatch('config/updateAlarm', true)
+          } else if (val.type == "PIR") {
+            this.$store.dispatch('config/countVisitors')
+          }
         }
       },
       getNotify(val) {
