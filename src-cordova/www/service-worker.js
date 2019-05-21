@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.13562c596ee27e26cad4332f6f13f115.js"
+  "precache-manifest.390ab717256d04a106c29020ed9271f4.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "vendofy-customer"});

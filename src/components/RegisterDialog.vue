@@ -116,6 +116,8 @@
                 }
             },
             closeReg: function () {
+                this.customerName = ''
+                this.$v.$reset()
                 this.$emit("close-register")
             }
         },
