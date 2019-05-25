@@ -39,7 +39,7 @@
                                             ({{ cart.size }}) {{ cart.descrp }} 
                                         </p>
                                     </v-list-tile-title>
-                                    <v-list-tile-sub-title>
+                                    <v-list-tile-sub-title class="mt-1">
                                         <p class="title font-weight-regular deep-orange--text">
                                             ₱ {{ cart.price }}
                                         </p>
@@ -55,7 +55,7 @@
 
                             <template v-if="getCart.length > 0">
                                 <v-divider inset></v-divider>
-                            
+
                                 <v-list-tile avatar>
                                     <v-list-tile-avatar></v-list-tile-avatar>
                                     <v-list-tile-content>

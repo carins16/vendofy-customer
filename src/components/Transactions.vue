@@ -1,11 +1,11 @@
 <template>
     <v-layout column>
         <v-flex xs12 ma-4>
-            <v-list two-line>
+            <v-list three-line>
                 <template v-for="(trans, index) in transactions">
-                    <v-list-tile :key="trans.key" avatar ripple style="height: 80px;">
+                    <v-list-tile :key="trans.key" avatar ripple>
                         <v-list-tile-avatar>
-                            <v-img height="36" :src="trans.pic">
+                            <v-img :src="trans.pic">
                                 <template v-slot:placeholder>
                                     <v-layout fill-height align-center justify-center ma-0 >
                                         <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
@@ -15,7 +15,7 @@
                         </v-list-tile-avatar>
 
                         <v-list-tile-content>
-                            <v-list-tile-title class="mt-2 mb-1">
+                            <v-list-tile-title>
                                 <v-layout row>
                                     <v-flex xs10>
                                         <p class="title font-weight-regular text-no-wrap text-truncate">
@@ -44,7 +44,7 @@
                             <v-spacer></v-spacer>
                         </v-list-tile-action>
                     </v-list-tile>
-                    <v-divider v-if="index + 1 < transactions.length" :key="index"></v-divider>
+                    <v-divider :inset="true" v-if="index + 1 < transactions.length" :key="index"></v-divider>
                 </template>
             </v-list>
         </v-flex>
