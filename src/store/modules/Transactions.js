@@ -12,7 +12,6 @@ export default {
     },
     actions: {
         fetchTransactions({rootState, commit}) {
-
             // get signed customer data
             var customerSigned = rootState.customers.signedCustomer
 
@@ -31,6 +30,7 @@ export default {
                                 key:            doc.id,
                                 customerKey:    doc.data().customerKey,
                                 dateTrans:      doc.data().dateTrans.seconds,
+                                prodKey:        doc.data().prodKey,
                                 descrp:         doc.data().descrp,
                                 size:           doc.data().size,
                                 pic:            doc.data().pic,
@@ -51,6 +51,7 @@ export default {
                 firebase.firestore().collection('transactions').add({
                     customerKey:    customerSigned.key,
                     dateTrans:      firebase.firestore.FieldValue.serverTimestamp(),
+                    prodKey:        payload.key,
                     descrp:         payload.descrp,
                     size:           payload.size,
                     pic:            payload.pic,
