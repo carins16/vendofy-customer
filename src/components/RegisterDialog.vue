@@ -117,6 +117,7 @@
             },
             closeReg: function () {
                 this.customerName = ''
+                this.e6 = 1
                 this.$v.$reset()
                 this.$emit("close-register")
             }
