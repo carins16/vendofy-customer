@@ -24,7 +24,8 @@ export default {
         },
         updateAlarm(context, status) {
             firebase.firestore().collection('config').doc('DYoThSRAElmX50fQI6jB').update({
-                alarm: status
+                alarm: status,
+                lastAlarm: firebase.firestore.FieldValue.serverTimestamp()
             }).then(function() {
                 console.log("Alarm successfully updated!");
             })
