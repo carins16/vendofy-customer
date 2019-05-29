@@ -41,7 +41,7 @@
                                     </v-list-tile-title>
                                     <v-list-tile-sub-title class="mt-1">
                                         <p class="title font-weight-regular deep-orange--text">
-                                            ₱ {{ cart.price }}
+                                            ₱ {{ Number(cart.price).toLocaleString() }}
                                         </p>
                                     </v-list-tile-sub-title>
                                 </v-list-tile-content>
@@ -61,7 +61,7 @@
                                     <v-list-tile-content>
                                         <v-list-tile-title>
                                             <p class="title font-weight-bold red--text">
-                                                Total: ₱ {{ getTotal }}
+                                                Total: ₱ {{ Number(getTotal).toLocaleString() }}
                                             </p>
                                         </v-list-tile-title>
                                     </v-list-tile-content>

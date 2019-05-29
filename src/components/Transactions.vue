@@ -1,7 +1,7 @@
 <template>
     <v-layout column>
         <v-flex xs12 ma-4>
-            <template v-if="transactions.length > 0">
+            <template v-if="transactions != null && transactions.length > 0">
                 <v-list three-line>
                     <template v-for="(trans, index) in transactions">
                         <v-list-tile :key="trans.key" avatar ripple>
@@ -27,7 +27,7 @@
                                 </v-list-tile-title>
                                 <v-list-tile-sub-title>
                                     <span class="title font-weight-regular deep-orange--text">
-                                        ₱ {{ trans.price }}
+                                        ₱ {{ Number(trans.price).toLocaleString() }}
                                     </span>
                                 </v-list-tile-sub-title>
                                 <v-list-tile-sub-title>
